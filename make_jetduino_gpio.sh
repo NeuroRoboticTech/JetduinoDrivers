@@ -1,3 +1,4 @@
+clear
 KERNEL_SRC="/usr/src/kernel"
 SPI_SRC="$KERNEL_SRC/drivers/spi"
 

@@ -1,52 +1,17 @@
 /*
- *  Custom GPIO-based SPI driver
+ *  Jetduino GPIO-based SPI driver
  *
- *  Copyright (C) 2013 Marco Burato <zmaster.adsl@gmail.com>
+ *  Copyright (C) 2014 David Cofer <dcofer@NeuroRoboticTech.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2 as
  *  published by the Free Software Foundation.
  *
- *  Based on i2c-gpio-custom by:
- *  Copyright (C) 2007-2008 Gabor Juhos <juhosg@openwrt.org>
+ *  Based on spi-gpio-custom by:
+ *  Copyright (C) Marco Burato <zmaster.adsl@gmail.com>
  * ---------------------------------------------------------------------------
  *
- *  The behaviour of this driver can be altered by setting some parameters
- *  from the insmod command line.
- *
- *  The following parameters are adjustable:
- *
- *	bus0	These four arguments can be arrays of
- *	bus1	1-8 unsigned integers as follows:
- *	bus2
- *	bus3	<id>,<sck>,<mosi>,<miso>,<mode1>,<maxfreq1>,<cs1>,...   
- *
- *  where:
- *
- *  <id>	ID to used as device_id for the corresponding bus (required)
- *  <sck>	GPIO pin ID to be used for bus SCK (required)
- *  <mosi>	GPIO pin ID to be used for bus MOSI (required*)
- *  <miso>	GPIO pin ID to be used for bus MISO (required*)
- *  <modeX>	Mode configuration for slave X in the bus (required)
- *  		(see /include/linux/spi/spi.h) 
- *  <maxfreqX>	Maximum clock frequency in Hz for slave X in the bus (required)
- *  <csX>	GPIO pin ID to be used for slave X CS (required**)
- *
- *	Notes:
- *	*	If a signal is not used (for example there is no MISO) you need
- *		to set the GPIO pin ID for that signal to an invalid value.
- *	**	If you only have 1 slave in the bus with no CS, you can omit the
- *		<cs1> param or set it to an invalid GPIO id to disable it. When
- *		you have 2 or more slaves, they must all have a valid CS.
- *
- *  If this driver is built into the kernel, you can use the following kernel
- *  command line parameters, with the same values as the corresponding module
- *  parameters listed above:
- *
- *	spi-gpio-custom.bus0
- *	spi-gpio-custom.bus1
- *	spi-gpio-custom.bus2
- *	spi-gpio-custom.bus3
+ TODO Description
  */
 
 #include <linux/kernel.h>
@@ -58,8 +23,10 @@
 #include <linux/spi/spi.h>
 #include <linux/spi/spi_gpio.h>
 
-#define DRV_NAME	"spi-gpio-custom"
-#define DRV_DESC	"Custom GPIO-based SPI driver"
+#define LOG_LEVEL KERN_ALERT
+
+#define DRV_NAME	"jetduino_gpio"
+#define DRV_DESC	"Jetduino GPIO-based SPI driver"
 #define DRV_VERSION	"0.1"
 
 #define PFX		DRV_NAME ": "
@@ -79,23 +46,22 @@
 #define BUS_COUNT_MAX		4
 
 static unsigned int bus0[BUS_PARAM_COUNT] __initdata;
-static unsigned int bus1[BUS_PARAM_COUNT] __initdata;
-static unsigned int bus2[BUS_PARAM_COUNT] __initdata;
-static unsigned int bus3[BUS_PARAM_COUNT] __initdata;
+//static unsigned int bus1[BUS_PARAM_COUNT] __initdata ;
+//static unsigned int bus2[BUS_PARAM_COUNT] __initdata;
+//static unsigned int bus3[BUS_PARAM_COUNT] __initdata;
 
 static unsigned int bus_nump[BUS_COUNT_MAX] __initdata;
 
-#define BUS_PARM_DESC \
-	" config -> id,sck,mosi,miso,mode1,maxfreq1[,cs1,mode2,maxfreq2,cs2,...]"
+//#define BUS_PARM_DESC " config -> id,sck,mosi,miso,mode1,maxfreq1[,cs1,mode2,maxfreq2,cs2,...]"
 
-module_param_array(bus0, uint, &bus_nump[0], 0);
-MODULE_PARM_DESC(bus0, "bus0" BUS_PARM_DESC);
-module_param_array(bus1, uint, &bus_nump[1], 0);
-MODULE_PARM_DESC(bus1, "bus1" BUS_PARM_DESC);
-module_param_array(bus2, uint, &bus_nump[2], 0);
-MODULE_PARM_DESC(bus2, "bus2" BUS_PARM_DESC);
-module_param_array(bus3, uint, &bus_nump[3], 0);
-MODULE_PARM_DESC(bus3, "bus3" BUS_PARM_DESC);
+//module_param_array(bus0, uint, &bus_nump[0], 0);
+//MODULE_PARM_DESC(bus0, "bus0" BUS_PARM_DESC);
+//module_param_array(bus1, uint, &bus_nump[1], 0);
+//MODULE_PARM_DESC(bus1, "bus1" BUS_PARM_DESC);
+//module_param_array(bus2, uint, &bus_nump[2], 0);
+//MODULE_PARM_DESC(bus2, "bus2" BUS_PARM_DESC);
+//module_param_array(bus3, uint, &bus_nump[3], 0);
+//MODULE_PARM_DESC(bus3, "bus3" BUS_PARM_DESC);
 
 static struct platform_device *devices[BUS_COUNT_MAX];
 static unsigned int nr_devices;
@@ -301,20 +267,36 @@ err:
 static int __init spi_gpio_custom_probe(void)
 {
 	int err;
+	int i=0;
 
 	printk(KERN_INFO DRV_DESC " version " DRV_VERSION "\n");
+	printk(LOG_LEVEL " Jetduino GPIO Init. version " DRV_VERSION "\n");
+
+	memset(&bus0, -1, sizeof(bus0));
+	bus0[0] = 1; bus0[1] = 160; bus0[2] = 161; bus0[3] = 162; 
+	bus0[4] = 0; bus0[5] = 10000; bus0[6] = 163; 
+	for(i=0; i<10; i++)
+	  printk(LOG_LEVEL "%d ", bus0[i]);
+	
+        printk(LOG_LEVEL "\r\n");
+
+	bus_nump[0] = 7;
+	//id,sck,mosi,miso,mode1,maxfreq1[,cs1,mode2,maxfreq2,cs2,...]
+	//
+
+	
 
 	err = spi_gpio_custom_add_one(0, bus0);
 	if (err) goto err;
 
-	err = spi_gpio_custom_add_one(1, bus1);
-	if (err) goto err;
+	//err = spi_gpio_custom_add_one(1, bus1);
+	//if (err) goto err;
 
-	err = spi_gpio_custom_add_one(2, bus2);
-	if (err) goto err;
+	//err = spi_gpio_custom_add_one(2, bus2);
+	//if (err) goto err;
 
-	err = spi_gpio_custom_add_one(3, bus3);
-	if (err) goto err;
+	//err = spi_gpio_custom_add_one(3, bus3);
+	//if (err) goto err;
 
 	if (!nr_devices) {
 		printk(KERN_ERR PFX "no bus parameter(s) specified\n");
@@ -346,6 +328,6 @@ subsys_initcall(spi_gpio_custom_probe);
 #endif /* MODULE*/
 
 MODULE_LICENSE("GPL v2");
-MODULE_AUTHOR("Marco Burato <zmaster.adsl@gmail.com>");
+MODULE_AUTHOR("David Cofer <dcofer@NeuroRoboticTech.com>");
 MODULE_DESCRIPTION(DRV_DESC);
 MODULE_VERSION(DRV_VERSION);
