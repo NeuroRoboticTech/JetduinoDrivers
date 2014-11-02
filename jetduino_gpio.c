@@ -175,7 +175,7 @@ static int __init spi_gpio_custom_add_one(unsigned int id, unsigned int *params)
 
 	/* Create BUS device node */
 
-	pdev = platform_device_alloc("spi_gpio", params[BUS_PARAM_ID]);
+	pdev = platform_device_alloc("jetduino_spi1", params[BUS_PARAM_ID]);
 	if (!pdev) {
 		err = -ENOMEM;
 		goto err;
@@ -274,7 +274,7 @@ static int __init spi_gpio_custom_probe(void)
 
 	memset(&bus0, -1, sizeof(bus0));
 	bus0[0] = 1; bus0[1] = 160; bus0[2] = 161; bus0[3] = 162; 
-	bus0[4] = 0; bus0[5] = 10000; bus0[6] = 163; 
+	bus0[4] = 0; bus0[5] = 1000000; bus0[6] = 163; 
 	for(i=0; i<10; i++)
 	  printk(LOG_LEVEL "%d ", bus0[i]);
 	

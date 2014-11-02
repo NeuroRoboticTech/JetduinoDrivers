@@ -1,0 +1,36 @@
+11/2/14
+I was able to get the jetduino spi1 and gpio drivers both working today and transmitting data.
+However, in my initial tests when I use spi_gpio with the jetduino driver I am only getting
+around a maximum of 327kbaud data rate. When I switch to the custom spi_gpio that I build,
+jetduino_spi1, I can increase this slightly to 406 kbaud. Still not anywhere near what I want
+it to be. Here is a description of how I did this, and what I learned.
+
+1. The device system on linux is split between a platform driver and a protocol driver. 
+The platform driver is specific to your hardware. In my case this is the spi_gpio, or
+the jetduino_spi1. The jetduino_spi1 is a very simple wrapper around spi_gpio that
+essentially hardcodes the gpio data lines in order to make the processing loops slightly
+faster. You must first bring up one of these platform drivers before attempting to 
+create an actual device.
+
+2. The second part is the device protocol driver. Its job is to push data in and out in 
+a hardware agnostic method. Since that the hardware piece was split out into the platform
+driver this is possible. For this I am using spidev. This is a generic spi protocol driver
+included in the linux OS that allows you to treat the spi device like a file. I have modified
+some code I found online for spio-gpio-custom, which let you set up your gpio lines in 
+the command line params and it then created the platform and protocol drivers using 
+spi-gpio and spidev. I modified this to instead hardcode the values I will be using on 
+the jetson for testing, and then had it call the jetduino_spi1 platform driver instead.
+
+3. Before you can use any of this you must first reconfigure your kernel so it includes
+the modules you are building. This means modifying the makefiles and Kconfig files in 
+the spi directory, running menuconfig to set the various modules you will need to be 
+added, including spi-gpio. Then you need to recompile and flash your kernel to the jetson.
+If the new kernel is not on the jetson you will not be able to load the modules for testing.
+
+4. printk statements do not show up on the command line by default. You must run dmesg to
+look in the logs to see what happened.
+
+Next, I am going to start looking to see if I can instead use the tegra114 SPI controller
+for the touch screen instead of using GPIO bit banging.
+
+
