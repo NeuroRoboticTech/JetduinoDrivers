@@ -33,4 +33,189 @@ look in the logs to see what happened.
 Next, I am going to start looking to see if I can instead use the tegra114 SPI controller
 for the touch screen instead of using GPIO bit banging.
 
+11/5/14
+
+I got the Tegra SPI controller working this morning! I also did it without having to use any
+custom driver code. By looking at the schematics, the tegra TRM, and the tegra123-pm735.dts
+I was able to determine how to do it. Here are the steps to reproduce it.
+
+1. You must have the ability to compile your own kernel, and have access to the kernel
+source tree. Please see this kernel recompile guide 
+(https://devtalk.nvidia.com/default/topic/751707/jetson-tk1-kernel-recompile-guide/)
+
+2. You must be using U-Boot for your boot loader and not the fast boot that comes
+on the board by default. See this article on how to switch your bootloader
+with your existing system image. 
+(https://devtalk.nvidia.com/default/topic/784124/?comment=4344511)
+
+3. Generate out a human readable dts file from the device tree blob
+> cd /usr/src/kernel
+> sudo ./scripts/dtc/dtc -I dtb -O dts -o /boot/tegra124-pm375.dts /boot/tegra124-pm375.dtb
+
+4. Open /boot/tegra124-pm375.dts for editing as root user using your favorite text editor
+> sudo gedit /boot/tegra124-pm375.dts
+
+5. If you download the TRM and the schematics you can see in the schematics that the 
+TS_SPI signals are connected to the ULPI_ group of outputs on the Tegra chip. Looking at
+one of these in particular, TS_SPI_SCK is on the ULPI_NXT line. If you look up ULPI_NXT
+in the TRM you can find on page 296 that it can have several states in the pinmux, but 
+it should be defaulted to spi1.
+
+6. Now going to the dts file. The first thing to notice is the alias section at the top. 
+It is listed here: 
+
+	aliases {
+		i2c0 = "/i2c@7000c000";
+		i2c1 = "/i2c@7000c400";
+		i2c2 = "/i2c@7000c500";
+		i2c3 = "/i2c@7000c700";
+		i2c4 = "/i2c@7000d000";
+		i2c5 = "/i2c@7000d100";
+		serial0 = "/serial@70006000";
+		serial1 = "/serial@70006040";
+		serial2 = "/serial@70006200";
+		serial3 = "/serial@70006300";
+		spi0 = "/spi@7000d400";
+		spi1 = "/spi@7000d600";
+		spi2 = "/spi@7000d800";
+		spi3 = "/spi@7000da00";
+		spi4 = "/spi@7000dc00";
+		spi5 = "/spi@7000de00";
+	};
+
+This shows the mapping of the spiX devices to their entries in the dts definition. 
+
+7. Now search for the first spi entry value spi@7000d400. Listing is shown below:
+
+	spi@7000d400 {
+		compatible = "nvidia,tegra114-spi";
+		reg = <0x7000d400 0x200>;
+		interrupts = <0x0 0x3b 0x4>;
+		nvidia,dma-request-selector = <0x7 0xf>;
+		nvidia,memory-clients = <0xe>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		status = "okay";
+		spi-max-frequency = <0x17d7840>;
+	};
+
+You can see that its status is "okay", meaning it is enabled. Looking through the
+other spi definitions we can see that only spi3 is also enabled. The others are
+disabled. 
+
+8. Next, look in the dts for ulpi_nxt. We find an entry in the pinmux section listed
+below:
+
+
+			ulpi_nxt_py2 {
+				nvidia,pins = "ulpi_nxt_py2";
+				nvidia,function = "spi1";
+				nvidia,enable-input = <0x0>;
+				nvidia,pull = <0x0>;
+				nvidia,tristate = <0x0>;
+			};
+
+We can see that this matches what we saw in the TRM and that ulpi pad is set to 
+implement spi1. Looking at the other ulpi pins for TS shows that they are also
+configured for spi1. 
+
+9. However, looking back through the TRM gives a hint that there is a disconnect
+in the spi numbering scheme. For instance, on page 273 of the TRM it states 
+"SPI4C is used for a SPI interface for secondary boot. ..."
+However, looking at the dts defintion shows only spi 0 and 3 are currently active.
+If we look back up at the alias entries we can see that they start at spi0, not
+spi1. So spi0 in the dts is actually spi1 in the pinmux definitions. That is
+very confusing, but we have now identified the dts settings for the touch screen
+as being spi0.
+
+10. That spi is already activated, so all we have to do is add some way to access
+the master bus controller with a protocol driver. To make things simple it would be
+nice to just use spidev. However, it is not switched on by default in the kernel, 
+so we will need to configure it to be active.
+
+1. sudo su
+2. cd /usr/src/kernel
+3. make menuconfig
+
+Go to Device Drivers -> SPI Support. Then scroll down to find "User mode SPI device
+driver support" and either check it as a module or to include it in the kernel by
+defualt. While you are in here you can also check "GPIO-based bitbanging SPI Master"
+and "Utilities for Bitbanging SPI masters" to add the ability to use GPIO SPI as well.
+Save out the config changes.
+
+11. Compile the kerenel and modules again
+
+1.  make
+2. make modules
+3. make modules_install
+
+12. Now copy the zImage from ./arch/arm/boot/zImage to your boot folder
+
+1. cp ./arch/arm/boot/zImage /boot
+
+13. Now our kerenel image should be reconfigured to allow us to use spidev. Now we
+need to add an entry in our dts to connect spidev to the spi touch screen controller.
+Find the entry for spi@7000d400 and replace it with the one below:
+
+	spi@7000d400 {
+		compatible = "nvidia,tegra114-spi";
+		reg = <0x7000d400 0x200>;
+		interrupts = <0x0 0x3b 0x4>;
+		nvidia,dma-request-selector = <0x7 0xf>;
+		nvidia,memory-clients = <0xe>;
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		status = "okay";
+		spi-max-frequency = <0x17d7840>;
+
+	    	spi0_0{
+			#address-cells    = <1>;
+			#size-cells       = <0>;
+			compatible        = "spidev";
+			reg               = <0>;
+			// Mode 0 (CPOL = 0, CPHA = 0)
+		    };
+	};
+
+This adds a protocol driver for that spi device that uses spidev for communications.
+The reg entry controls the chip select value for it and spi-max-frequency controls
+the clock frequency. Save out this file.
+
+14. Now we must regenerate the dtb file from the dts. 
+
+1. ./scripts/dtc/dtc -I dts -O dtb  -o /boot/tegra124-pm375.dtb /boot/tegra124-pm375.dts
+
+15. You can now reboot. If everything worked correctly then your new kernel image was
+loaded with spidev support and the new dtb file created the file /dev/spidev0.0 for you.
+You can now send and receive data on your spi port using standard sysfs procedures. For
+example:
+
+1. sudo echo hello > /dev/spidev0.0
+
+This will send the text "hello" out on your spi bus. You can use ioctrl commands to do 
+full duplex communications. Here are the pins where you can monitor on the Jetson's J3A1
+header for the SPI. 
+
+TS_SPI_SCK   -> 4
+TS_SPI_MOSI  -> 5
+TS_SPI_CS_L  -> 6
+TS_SPI_MISO  -> 7
+
+If you hook up a logic analyzer you can see the clock signal generated at 25Mhz and the 
+hello bits being generated on the MISO line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
