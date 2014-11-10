@@ -205,8 +205,61 @@ If you hook up a logic analyzer you can see the clock signal generated at 25Mhz 
 hello bits being generated on the MISO line.
 
 
+11/6/14
+For some reason changing the spi-max-frequency on the spi dtb tag did not reset the 
+frequency it used. It still wrote out at 25Mhz even though I set it to 10Mhz.
 
 
+11/9/14
+I built a Hackduino today and I am investigating how to program it from the jetson 
+uart port available on the header. It looks like I want UART1 which has the following
+pins
+
+65  - UART2_RXD
+68  - UART2_TXD
+71  - UART2_CTS_L
+74  - UART2_RTS_L
+
+This supposedly corresponds to /dev/ttyTH1 according to these posts:
+https://devtalk.nvidia.com/default/topic/770603/?comment=4294800
+https://devtalk.nvidia.com/default/topic/769046/?comment=4291959
+
+I also looked through these posts to see how to program the hackduino from the serial port
+http://blog.solutions-cubed.com/programming-the-arduino-uno-with-a-serial-port/
+
+In that post it discusses using the DTR line for reset, but that signal is not available on
+the jetson UART pins. I then found this post:
+http://www.instructables.com/id/The-Embedded-Arduino-building-an-Arduino-into-a-p/step4/Communicating-with-the-Arduino/
+That said that the it can use the RTS line instead. So I will start by trying to hook it up
+using the RTS line.
+
+I also checked those lines out using my multi-meter and found that RTS and TXD are at 1.8v and
+CTS and RXD are at ~0v. So it is not using a standard +12/-12v old-style uart voltage levels.
+So we should just be able to use a standard level shifter from 1.8v to 5v and hook it directly
+to the arduino pins.
+
+11/10/14
+I tried hooking the hackduino up to the jetson to see if I could program it using the arduino
+app. However, it did not see any of the ttyTHSx ports on it. So something is off. I wanted to
+try and just test serial communications with a standard terminal emulator and one of the 
+working arduinos I have. I finally found this entry that shows how to get the input coming
+from a serial line. I am going to setup the arduino to transmit data continuously to the
+uart line and then connect to the ttyTHS ports to see which one is getting the data in to try
+and identify which port it is. Then I need to figure out why it is not showing up in the 
+list of ports in arduino.
+
+Ok. I ran a test where I had the logic analyzer hooked up to the TX line on pin 68. 
+(Note: The image shown on https://devtalk.nvidia.com/default/topic/770603/?comment=4294800
+is incorrect. It has Tx and Rx swapped.) I then ran the following command to send data out
+on the different /dev/ttyTHSx lines. 
+stty -F /dev/ttyTHS2 speed 9600 cs8 -cstopb -parenb && echo hello > /dev/ttyTHS2
+
+From:
+http://unix.stackexchange.com/questions/42376/reading-from-serial-from-linux-command-line
+
+It turned out that it is /dev/ttyTHS1 that corresponds to pins 68-74. So I now have those
+identified and have verified that it can send data out. Now I need to figure out why it 
+is not showing up as an option for the Arduino.
 
 
 
