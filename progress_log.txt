@@ -262,6 +262,96 @@ identified and have verified that it can send data out. Now I need to figure out
 is not showing up as an option for the Arduino.
 
 
+11/14/14
+I tried hooking up both a Max32 and an Arduino Due to the TS SPI port. I first tried to get 
+the arduino IDE and the MPIDE to run and ran into issues right off the bat. Neither of them
+will run on the jetson arm platform. I was able to get mpide to run the app, but as soon as
+I try and compile I get an odd error. I posted something on the forum, but so fare have had
+no luck with responses on that. I then tried downloading the 1.5.x arduino ide to run it on
+the jetson with no luck. Dies immediatly and does not even start the screen. I then tried
+to get the source and compile it using ant. It fails to compile with an error about a platform
+error. I then found an oduino site that said they had an arm version that works on their systems.
+I downloaded it and got the IDE to run, but when I try and compile I get an error about not
+beign able to find libmpc.so.2. I looked and the jetson has libmpc.so.3, so it does not look
+like that will work either. The only option looks like it will be to find some way to recompile
+the arduino source for the jetson. ughhh! Nothing is ever easy.
+
+I then tried running the max32 as a slave and was able to get it to receive a byte of data from
+the jetson at 25 Mhz. I then had it receive multiple bytes. However, I have a problem where the
+interrupt is being called repeatedly and continuously no matter what I do? I have not bee able
+to figure this one out yet, so I moved to the Due.
+
+I found some example code I put in the repo that showed how to hook up the due as a slave and
+setup the interrupts. I have the Due now sending and receiving data in full duplex to the jetson.
+However, there is one problem. For some reason I have to read a byte of data twice before I 
+actually get it in the jetson. ?? I checked the logic analyzer and it the data is being sent from
+the due correctly, but it is not being read into the buffer correctly for some reason. Very 
+frustating. I am so close. I checked the bits per word and it is set to 8, so that is not the issue.
+
+
+I am looking at the TRM for the tegra again and it may make sense to write my own custom spi driver
+for this so I can get close to the actual hardware and have access to the actual TX/RX FIFO buffers.
+I am looking at the /usr/src/kernel/drivers/spi/spi-tegra114.c file for some clues.
+
+CRAP! I think I just found the issue with why the tegra SPI is always at 25 Mhz!! It is in line 1244
+of that file. 
+
+	if (!pdata->spi_max_frequency)
+		pdata->spi_max_frequency = 25000000; /* 25MHz */
+
+It always forces the spi frequency to be 25 Mhz regardless. 
+
+
+11/16/14
+I have been investigating the read issue. I found it suspicous that it seemed to be getting every
+other byte just fine. I was starting at 1 and going up. I ran a bunch of different tests. I was
+annoyed that I could not find a way to make codeblocks display watch values in hex, so I decided
+to change the values I was sending so they started at 65. When I did that I think it helped 
+determine what it going on. When I read that in on the Jetson I got 32 instead. The binary for those
+values is shown below:
+
+32 = 0100 0000
+65 = 0100 0001
+
+So you can see that it did not get the last bit for some reason. That would also explain why it only
+seemed to get every other byte when I was incrementing. Each odd one would be missing the last "1"
+bit so it would look like the one before it. The question now is why is it doing this. I am going
+to investigate the clock phase and polarity on the jetson to see what it is using.
+
+Looked at this document: /usr/src/kernel/Documentation/devicetree/bindings/spi/nvidia,spi-tegra114.txt
+and saw that it had some settings that looked like they could enable the hardware controlled CS and
+that controlled the timing of the clock delays. 
+
+Example:
+spi@7000d600 {
+	compatible = "nvidia,tegra114-spi";
+	reg = <0x7000d600 0x200>;
+	interrupts = <0 82 0x04>;
+	nvidia,dma-request-selector = <&apbdma 16>;
+	spi-max-frequency = <25000000>;
+	nvidia,clock-always-on;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "disabled";
+
+	<spi-client>@<bus_num> {
+		...
+		...
+		nvidia,enable-hw-based-cs;
+		nvidia,cs-setup-clk-count = <10>;
+		nvidia,cs-hold-clk-count = <10>;
+		nvidia,rx-clk-tap-delay = <0>;
+		nvidia,tx-clk-tap-delay = <16>;
+		...
+	};
+};
+
+I am going to add these to the dtb and see if it makes any difference. Probably will not. I am then going to
+try and change the clock phase so it uses rising edge and see if that makes any difference.
+
+
+
+
 
 
 
