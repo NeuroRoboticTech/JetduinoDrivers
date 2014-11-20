@@ -349,6 +349,15 @@ spi@7000d600 {
 I am going to add these to the dtb and see if it makes any difference. Probably will not. I am then going to
 try and change the clock phase so it uses rising edge and see if that makes any difference.
 
+I looked at the way the data was being sent and it was set in mode 0, which looked at it on the first edge of
+the clock in stead of the second. That is a problem though because it has the data bit falling or rising just
+as it tries to read it and that is what is causing my problem. I switched both the Due and the jetson to use
+mode 1 (CPOL 0, CPHA 1). However, it still had the same problem, just reversed. It was doing the same thing
+on the second edge of the clock. I then left the jetson as mode 1 and switched the Due back to mode 0 and I
+was able to get correct data now. This is because the data value is established at the beginning of the 
+first clock edge and the jetson reads it at the second clock edge. However, I now have the modes on the two 
+systems out of synch, and I am not sure what that would do to the jetson->Due trasmissions. I am going to 
+investigate if there is a way to modify when the data goes up relative to the clock edge on the due.
 
 
 
