@@ -10,32 +10,61 @@
 // assumes MSB
 static BitOrder bitOrder = MSBFIRST;
 
-static byte aryBuffer[7] = {0,0,0,0,0,0,0};
-static byte iBufferIdx = 0;
+static byte aryInBuffer[7] = {0,0,0,0,0,0,0};
+//static byte aryOutBuffer[7] = {1,2,3,4,5,6,7};
+static byte iInBufferIdx = 0;
+static byte iOutBufferIdx = 85;
+static bool bVal = false;
 
 void SPI0_Handler() {
   NVIC_DisableIRQ(SPI0_IRQn);
   
-  uint32_t d = REG_SPI0_RDR;
-  aryBuffer[iBufferIdx] = (byte) d;
-  
-  iBufferIdx++;
-  //Serial.print("BufferIdx: ");
-  //Serial.println(iBufferIdx);
+  Serial.println("Interrupt triggered!");
+  Serial.print("REG_SPI0_SR: ");
+  Serial.println(REG_SPI0_SR);
 
-  if(iBufferIdx > 6)
+  uint32_t iStatus = REG_SPI0_SR;
+
+  if(iStatus & SPI_SR_RDRF)  
   {
-    iBufferIdx=0;
-    
-    Serial.print("Recieved: ");
-    for(int i=0; i<7; i++)
+    uint32_t d = REG_SPI0_RDR;
+    aryInBuffer[iInBufferIdx] = (byte) d;
+
+    Serial.print("Rx BufferIdx: ");
+    Serial.print(iInBufferIdx);
+    Serial.print(" Buffer: ");
+    Serial.println(d);
+
+    iInBufferIdx++;
+    if(iInBufferIdx > 6)
     {
-      Serial.print(aryBuffer[i]);
-      Serial.print(", ");
+      iInBufferIdx=0;
+      
+      //Serial.print("Recieved: ");
+      //for(int i=0; i<7; i++)
+      //{
+      //  Serial.print(aryInBuffer[i]);
+      //  Serial.print(", ");
+      //}
+      //Serial.println(" ");
     }
-    Serial.println(" ");
   }
   
+  if(iStatus & SPI_SR_TDRE)
+  {
+    iOutBufferIdx = 0;
+    if(iOutBufferIdx>255)
+      iOutBufferIdx=0;      
+    
+    REG_SPI0_TDR = (uint32_t) 0x5555;
+    
+    //Serial.print("TX BufferIdx: ");
+    //Serial.print(iOutBufferIdx);
+  }
+  
+  digitalWrite(9, bVal);
+  bVal = !bVal;
+
   NVIC_EnableIRQ(SPI0_IRQn);
 }
 
@@ -44,12 +73,16 @@ void slaveBegin(uint8_t _pin) {
 	REG_SPI0_CR = SPI_CR_SWRST;     // reset SPI
 	REG_SPI0_CR = SPI_CR_SPIEN;     // enable SPI
 	REG_SPI0_MR = SPI_MR_MODFDIS;     // slave and no modefault
-	REG_SPI0_CSR = SPI_MODE0;    // DLYBCT=0, DLYBS=0, SCBR=0, 8 bit transfer
+	REG_SPI0_CSR = 0x82;    // DLYBCT=0, DLYBS=0, SCBR=0, 8 bit transfer
+	//REG_SPI0_CSR = (SPI_MODE0 | 0x80);    // DLYBCT=0, DLYBS=0, SCBR=0, 16 bit transfer
 
+	//REG_SPI0_IDR = ~SPI_IDR_TDRE;
+	//REG_SPI0_IER = SPI_IDR_TDRE;
 	REG_SPI0_IDR = ~SPI_IDR_RDRF;
-	REG_SPI0_IER = SPI_IER_RDRF;
+	REG_SPI0_IER = SPI_IDR_RDRF;
 
 	NVIC_EnableIRQ(SPI0_IRQn);
+        REG_SPI0_TDR = (uint32_t) 0x5555; //aryOutBuffer[0];
 }
 
 /*
@@ -93,8 +126,6 @@ byte transfer(uint8_t _pin, uint8_t _data) {
 #define PRREG(x) Serial.print(#x" 0x"); Serial.println(x,HEX)
 
 void prregs() {
-	Serial.begin(57600);
-	while(!Serial);
 	PRREG(REG_SPI0_MR);
 	PRREG(REG_SPI0_CSR);
 	PRREG(REG_SPI0_SR);
@@ -103,8 +134,18 @@ void prregs() {
 
 #define SS 10
 void setup() {
+	Serial.begin(57600);
+	while(!Serial);
+        Serial.println("Starting setup");
+        
 	slaveBegin(SS);
 	prregs();  // debug
+
+        pinMode(9, OUTPUT);
+        digitalWrite(9, bVal);
+        bVal = !bVal;
+        //Serial.print("REG_SPI0_CSR: ");
+        //Serial.println(SPI_MODE0);
 }
 
 void loop() {
