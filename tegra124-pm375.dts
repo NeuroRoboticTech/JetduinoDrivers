@@ -1744,7 +1744,7 @@
 		sda-gpio = <0x8 0x15 0x0>;
 		nvidia,memory-clients = <0xe>;
 		status = "okay";
-		clock-frequency = <0x186a0>;
+		clock-frequency = <0xf4240>;
 	};
 
 	i2c@7000c400 {
@@ -1757,7 +1757,7 @@
 		sda-gpio = <0x8 0x9e 0x0>;
 		nvidia,memory-clients = <0xe>;
 		status = "okay";
-		clock-frequency = <0xC3500>;
+		clock-frequency = <0xf4240>;
 	};
 
 	i2c@7000c500 {
@@ -1821,16 +1821,21 @@
 		#address-cells = <0x1>;
 		#size-cells = <0x0>;
 		status = "okay";
-		spi-max-frequency = <0x17d7840>;
+		spi-max-frequency = <0x989680>;
 
-	    	spi0_0{
-			#address-cells    = <1>;
-			#size-cells       = <0>;
-			compatible        = "spidev";
-			reg               = <0>;
-			spi-max-frequency = <1000000>;
-			// Mode 0 (CPOL = 0, CPHA = 0)
-		    };
+		spi0_0 {
+			#address-cells = <0x1>;
+			#size-cells = <0x0>;
+			compatible = "spidev";
+			reg = <0x0>;
+			spi-max-frequency = <0xf4240>;
+			spi-cpha;
+			nvidia,enable-hw-based-cs;
+			nvidia,cs-setup-clk-count = <0x1e>;
+			nvidia,cs-hold-clk-count = <0x1e>;
+			nvidia,rx-clk-tap-delay = <0x1f>;
+			nvidia,tx-clk-tap-delay = <0x0>;
+		};
 	};
 
 	spi@7000d600 {
