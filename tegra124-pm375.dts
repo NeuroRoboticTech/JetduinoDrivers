@@ -1835,6 +1835,7 @@
 			nvidia,cs-hold-clk-count = <0x1e>;
 			nvidia,rx-clk-tap-delay = <0x1f>;
 			nvidia,tx-clk-tap-delay = <0x0>;
+			nvidia,cycles-between-packets-0 = <0x1f>;
 			nvidia,cycles-between-packets-1 = <0x1f>;
 			nvidia,cycles-between-packets-2 = <0x1f>;
 			nvidia,cycles-between-packets-3 = <0x1f>;
