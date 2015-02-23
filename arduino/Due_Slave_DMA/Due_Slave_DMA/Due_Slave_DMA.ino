@@ -1,40 +1,18 @@
-// dmaspi   from SdFat lib
+// SPI slave for DUE, hack
+//  master will lower CS and manage CLK
+// MISO to MISO  MOSI to MOSI   CLK to CLK   CS to CS, common ground
+//   http://forum.arduino.cc/index.php/topic,157203.0.html
+// core hardware/arduino/sam/system/libsam/source/spi.c
+// TODO:  C class, interrupt, FIFO/16-bit, DMA?
 
-#define CS 10
-#define SPI_RATE 21
+#include <SPI.h>
 
-#define SPI_BUFF_SIZE 1000
+// assumes MSB
+static BitOrder bitOrder = MSBFIRST;
+
+#define SPI_BUFF_SIZE 10
 uint8_t rx_buffer[SPI_BUFF_SIZE];
 uint8_t tx_buffer[SPI_BUFF_SIZE];
-
-void setup() {
-	Serial.begin(9600);
-	while(!Serial);
-        Serial.println("Starting setup");
-        
-	pinMode(CS,INPUT);
-
-	spiBegin();
-	spiInit(SPI_RATE);
-
-        for(int iIdx=0; iIdx<SPI_BUFF_SIZE; iIdx++)
-          tx_buffer[iIdx] = 1;
-}
-
-void loop() {
-	uint32_t t1;
-	double mbs;
-	char str[64];
-
-        Serial.println("Waiting for write");
-	t1 = micros();
-	spiSend(tx_buffer,SPI_BUFF_SIZE);
-	t1 = micros() - t1;
-	mbs = 8*SPI_BUFF_SIZE/(float)t1;
-	sprintf(str,"%d us 84/%d= %d Mhz  %.2f mbs",t1,SPI_RATE,84/SPI_RATE,mbs);
-	Serial.println(str);
-	delay(3000);
-}
 
 /** Use SAM3X DMAC if nonzero */
 #define USE_SAM3X_DMAC 1
@@ -73,39 +51,7 @@ static void dmac_channel_enable(uint32_t ul_num) {
 static bool dmac_channel_transfer_done(uint32_t ul_num) {
   return (DMAC->DMAC_CHSR & (DMAC_CHSR_ENA0 << ul_num)) ? false : true;
 }
-//------------------------------------------------------------------------------
-static void spiBegin() {
-  PIO_Configure(
-      g_APinDescription[PIN_SPI_MOSI].pPort,
-      g_APinDescription[PIN_SPI_MOSI].ulPinType,
-      g_APinDescription[PIN_SPI_MOSI].ulPin,
-      g_APinDescription[PIN_SPI_MOSI].ulPinConfiguration);
-  PIO_Configure(
-      g_APinDescription[PIN_SPI_MISO].pPort,
-      g_APinDescription[PIN_SPI_MISO].ulPinType,
-      g_APinDescription[PIN_SPI_MISO].ulPin,
-      g_APinDescription[PIN_SPI_MISO].ulPinConfiguration);
-  PIO_Configure(
-      g_APinDescription[PIN_SPI_SCK].pPort,
-      g_APinDescription[PIN_SPI_SCK].ulPinType,
-      g_APinDescription[PIN_SPI_SCK].ulPin,
-      g_APinDescription[PIN_SPI_SCK].ulPinConfiguration);
-  pmc_enable_periph_clk(ID_SPI0);
-#if USE_SAM3X_DMAC
-  pmc_enable_periph_clk(ID_DMAC);
-  dmac_disable();
-  DMAC->DMAC_GCFG = DMAC_GCFG_ARB_CFG_FIXED;
-  dmac_enable();
-#if USE_SAM3X_BUS_MATRIX_FIX
-  MATRIX->MATRIX_WPMR = 0x4d415400;
-  MATRIX->MATRIX_MCFG[1] = 1;
-  MATRIX->MATRIX_MCFG[2] = 1;
-  MATRIX->MATRIX_SCFG[0] = 0x01000010;
-  MATRIX->MATRIX_SCFG[1] = 0x01000010;
-  MATRIX->MATRIX_SCFG[7] = 0x01000010;
-#endif  // USE_SAM3X_BUS_MATRIX_FIX
-#endif  // USE_SAM3X_DMAC
-}
+
 //------------------------------------------------------------------------------
 // start RX DMA
 void spiDmaRX(uint8_t* dst, uint16_t count) {
@@ -147,26 +93,32 @@ void spiDmaTX(const uint8_t* src, uint16_t count) {
 
   dmac_channel_enable(SPI_DMAC_TX_CH);
 }
-//------------------------------------------------------------------------------
-//  initialize SPI controller
-static void spiInit(uint8_t spiRate) {
-  Spi* pSpi = SPI0;
-  uint8_t scbr = 255;
-  if (spiRate < 14) {
-    scbr = (2 | (spiRate & 1)) << (spiRate/2);
-  }
-  scbr = spiRate;  //thd
-  //  disable SPI
-  pSpi->SPI_CR = SPI_CR_SPIDIS;
-  // reset SPI
-  pSpi->SPI_CR = SPI_CR_SWRST;
-  // no mode fault detection, set master mode
-  pSpi->SPI_MR = SPI_PCS(SPI_CHIP_SEL) | SPI_MR_MODFDIS;
-  // mode 0, 8-bit,
-  pSpi->SPI_CSR[SPI_CHIP_SEL] = SPI_CSR_SCBR(scbr) | SPI_CSR_NCPHA;
-  // enable SPI
-  pSpi->SPI_CR |= SPI_CR_SPIEN;
+
+void slaveBegin(uint8_t _pin) {
+	SPI.begin(_pin);
+	REG_SPI0_CR = SPI_CR_SWRST;     // reset SPI
+	REG_SPI0_CR = SPI_CR_SPIEN;     // enable SPI
+	REG_SPI0_MR = SPI_MR_MODFDIS;     // slave and no modefault
+	//REG_SPI0_CSR = 0x80;    // DLYBCT=0, DLYBS=0, SCBR=0, 8 bit transfer
+	REG_SPI0_CSR = 0x00;    // DLYBCT=0, DLYBS=0, SCBR=0, 8 bit transfer
+
+#if USE_SAM3X_DMAC
+  pmc_enable_periph_clk(ID_DMAC);
+  dmac_disable();
+  DMAC->DMAC_GCFG = DMAC_GCFG_ARB_CFG_FIXED;
+  dmac_enable();
+#if USE_SAM3X_BUS_MATRIX_FIX
+  MATRIX->MATRIX_WPMR = 0x4d415400;
+  MATRIX->MATRIX_MCFG[1] = 1;
+  MATRIX->MATRIX_MCFG[2] = 1;
+  MATRIX->MATRIX_SCFG[0] = 0x01000010;
+  MATRIX->MATRIX_SCFG[1] = 0x01000010;
+  MATRIX->MATRIX_SCFG[7] = 0x01000010;
+#endif  // USE_SAM3X_BUS_MATRIX_FIX
+#endif  // USE_SAM3X_DMAC
+
 }
+
 //------------------------------------------------------------------------------
 static inline uint8_t spiTransfer(uint8_t b) {
   Spi* pSpi = SPI0;
@@ -195,12 +147,13 @@ static uint8_t spiRec(uint8_t* buf, size_t len) {
 
   uint32_t m = millis();
   while (!dmac_channel_transfer_done(SPI_DMAC_RX_CH)) {
-    if ((millis() - m) > SAM3X_DMA_TIMEOUT)  {
-      dmac_channel_disable(SPI_DMAC_RX_CH);
-      dmac_channel_disable(SPI_DMAC_TX_CH);
-      rtn = 2;
-      break;
-    }
+    //if ((millis() - m) > SAM3X_DMA_TIMEOUT)  {
+    //  dmac_channel_disable(SPI_DMAC_RX_CH);
+    //  dmac_channel_disable(SPI_DMAC_TX_CH);
+    //  rtn = 2;
+    //  Serial.println("Timed out!");
+    //  break;
+    //}
   }
   if (pSpi->SPI_SR & SPI_SR_OVRES) rtn |= 1;
 #else  // USE_SAM3X_DMAC
@@ -235,3 +188,36 @@ static void spiSend(const uint8_t* buf, size_t len) {
   uint8_t b = pSpi->SPI_RDR;
 }
 
+#define PRREG(x) Serial.print(#x" 0x"); Serial.println(x,HEX)
+
+void prregs() {
+	PRREG(REG_SPI0_MR);
+	PRREG(REG_SPI0_CSR);
+	PRREG(REG_SPI0_SR);
+}
+
+#define SS 10
+void setup() {
+	Serial.begin(57600);
+	while(!Serial);
+        Serial.println("Starting setup");
+        
+	slaveBegin(SS);
+	prregs();  // debug
+
+        //Serial.print("REG_SPI0_CSR: ");
+        //Serial.println(SPI_MODE0);
+}
+
+void loop() {
+  Serial.println("Waiting");
+  spiRec(rx_buffer,SPI_BUFF_SIZE);
+  Serial.println("Received data");
+  
+  for(int iIdx=0; iIdx<SPI_BUFF_SIZE; iIdx++)
+  {
+    Serial.print(rx_buffer[iIdx], HEX);
+    Serial.print(",");
+  }
+  Serial.println("");
+}

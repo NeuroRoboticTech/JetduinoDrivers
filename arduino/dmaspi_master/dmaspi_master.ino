@@ -1,10 +1,7 @@
 // dmaspi   from SdFat lib
 
-#define USE_ARDUINO_SPI_LIBRARY 0
-#define  USE_NATIVE_SAM3X_SPI 1
-
 #define CS 10
-#define SPI_RATE 21
+#define SPI_RATE 2
 
 #define SPI_BUFF_SIZE 1000
 uint8_t rx_buffer[SPI_BUFF_SIZE];
@@ -34,68 +31,9 @@ void loop() {
 	mbs = 8*SPI_BUFF_SIZE/(float)t1;
 	sprintf(str,"%d us 84/%d= %d Mhz  %.2f mbs",t1,SPI_RATE,84/SPI_RATE,mbs);
 	Serial.println(str);
-	delay(3000);
+	delay(5000);
 }
 
-// SPI functions
-//==============================================================================
-#if USE_ARDUINO_SPI_LIBRARY
-#include <SPI.h>
-//------------------------------------------------------------------------------
-static void spiBegin() {
-  SPI.begin();
-}
-//------------------------------------------------------------------------------
-static void spiInit(uint8_t spiRate) {
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setDataMode(SPI_MODE0);
-  int v;
-#ifdef SPI_CLOCK_DIV128
-  switch (spiRate/2) {
-    case 0: v = SPI_CLOCK_DIV2; break;
-    case 1: v = SPI_CLOCK_DIV4; break;
-    case 2: v = SPI_CLOCK_DIV8; break;
-    case 3: v = SPI_CLOCK_DIV16; break;
-    case 4: v = SPI_CLOCK_DIV32; break;
-    case 5: v = SPI_CLOCK_DIV64; break;
-    default: v = SPI_CLOCK_DIV128; break;
-  }
-#else  // SPI_CLOCK_DIV128
-  if (spiRate > 13) {
-    v = 255;
-  } else {
-    v = (2 | (spiRate & 1)) << (spiRate/2);
-  }
-#endif  // SPI_CLOCK_DIV128
-  SPI.setClockDivider(spiRate);  // thd
-}
-//------------------------------------------------------------------------------
-/** SPI receive a byte */
-static  uint8_t spiRec() {
-  return SPI.transfer(0XFF);
-}
-//------------------------------------------------------------------------------
-/** SPI receive multiple bytes */
-static uint8_t spiRec(uint8_t* buf, size_t len) {
-  for (size_t i = 0; i < len; i++) {
-    buf[i] = SPI.transfer(0XFF);
-  }
-  return 0;
-}
-//------------------------------------------------------------------------------
-/** SPI send a byte */
-static void spiSend(uint8_t b) {
-  SPI.transfer(b);
-}
-//------------------------------------------------------------------------------
-/** SPI send multiple bytes */
-static void spiSend(const uint8_t* buf, size_t len) {
-  for (size_t i = 0; i < len; i++) {
-    SPI.transfer(buf[i]);
-  }
-}
-//==============================================================================
-#elif  USE_NATIVE_SAM3X_SPI
 /** Use SAM3X DMAC if nonzero */
 #define USE_SAM3X_DMAC 1
 /** Use extra Bus Matrix arbitration fix if nonzero */
@@ -223,7 +161,7 @@ static void spiInit(uint8_t spiRate) {
   // no mode fault detection, set master mode
   pSpi->SPI_MR = SPI_PCS(SPI_CHIP_SEL) | SPI_MR_MODFDIS | SPI_MR_MSTR;
   // mode 0, 8-bit,
-  pSpi->SPI_CSR[SPI_CHIP_SEL] = SPI_CSR_SCBR(scbr) | SPI_CSR_NCPHA;
+  pSpi->SPI_CSR[SPI_CHIP_SEL] = SPI_CSR_SCBR(scbr); //| SPI_CSR_NCPHA
   // enable SPI
   pSpi->SPI_CR |= SPI_CR_SPIEN;
 }
@@ -294,4 +232,4 @@ static void spiSend(const uint8_t* buf, size_t len) {
   // leave RDR empty
   uint8_t b = pSpi->SPI_RDR;
 }
-#endif
+
