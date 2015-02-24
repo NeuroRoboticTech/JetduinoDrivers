@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1415473713 source:/media/ubuntu/jetson_data/Test/ArduinoI2c/i2c-arduino.c
+	<fcntl.h>
+	<linux/i2c-dev.h>
+	<linux/i2c.h>
+	<stdio.h>
+	<stdint.h>
+	<unistd.h>
+	<stdlib.h>
+	<getopt.h>
+	<fcntl.h>
+	<sys/ioctl.h>
+	<linux/types.h>
+	<linux/spi/spidev.h>
+
