@@ -135,6 +135,69 @@ static void dumpstat(const char *name, int fd)
 		name, mode, bitsr, bitsw, lsb ? "(lsb first) " : "", speed);
 }
 
+void do_msg(int fd, unsigned char out, int len)
+{
+	struct spi_ioc_transfer	xfer[1];
+	unsigned char		txbuf[32], rxbuf[32], *bp;
+	int			status;
+
+	memset(xfer, 0, sizeof xfer);
+	memset(txbuf, out, sizeof txbuf);
+	memset(rxbuf, 0, sizeof rxbuf);
+
+	if (len > (int) sizeof txbuf)
+		len = sizeof txbuf;
+
+	//txbuf[0] = out;
+	xfer[0].tx_buf = (unsigned long) txbuf;
+	xfer[0].rx_buf = (unsigned long) rxbuf;
+	xfer[0].len = len;
+
+	status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
+	if (status < 0) {
+		perror("SPI_IOC_MESSAGE");
+		return;
+	}
+
+	printf("response(%2d, %2d): ", len, status);
+	for (bp = rxbuf; len; len--)
+		printf(" %02x", *bp++);
+	printf("\n");
+}
+/*
+void do_msg(int fd, unsigned char out, int len)
+{
+	struct spi_ioc_transfer	xfer[2];
+	unsigned char		txbuf[32], rxbuf[32], *bp;
+	int			status;
+
+	memset(xfer, 0, sizeof xfer);
+	memset(txbuf, out, sizeof txbuf);
+	memset(rxbuf, 0, sizeof rxbuf);
+
+	if (len > (int) sizeof txbuf)
+		len = sizeof txbuf;
+
+	//txbuf[0] = out;
+	xfer[0].tx_buf = (unsigned long) txbuf;
+	xfer[0].len = len;
+
+	xfer[1].rx_buf = (unsigned long) rxbuf;
+	xfer[1].len = len;
+
+	status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
+	if (status < 0) {
+		perror("SPI_IOC_MESSAGE");
+		return;
+	}
+
+	printf("response(%2d, %2d): ", len, status);
+	for (bp = rxbuf; len; len--)
+		printf(" %02x", *bp++);
+	printf("\n");
+}
+*/
+/*
 void do_msg(int fd, unsigned int len)
 {
 	struct spi_ioc_transfer	xfer[2];
@@ -164,7 +227,7 @@ void do_msg(int fd, unsigned int len)
 		printf(" %02x", *bp++);
 	printf("\n");
 }
-
+*/
 int main (void)
 {
     timespec startTime, endTime;
@@ -209,7 +272,7 @@ int main (void)
     //{
         clock_gettime(CLOCK_REALTIME, &startTime);
 
-        readBytes = write(deviceHandle, outBuffer, 10);
+        //readBytes = write(deviceHandle, outBuffer, 10);
         //readBytes = write(deviceHandle, outBuffer, 2);
 
         // Send out data
@@ -225,8 +288,8 @@ int main (void)
         //char iVal = 100;
         //for(int i=0; i<64; i++)
         //{
-        //    do_msg(deviceHandle, BUFF_SIZE);
-        //    //readBytes = read(deviceHandle, outBuffer, 1);
+            do_msg(deviceHandle, 65, BUFF_SIZE);
+        //readBytes = read(deviceHandle, inBuffer, 10);
         //    //iVal = outBuffer[0];
         //}
 

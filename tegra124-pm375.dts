@@ -1821,14 +1821,13 @@
 		#address-cells = <0x1>;
 		#size-cells = <0x0>;
 		status = "okay";
-		spi-max-frequency = <0x989680>;
 
 		spi0_0 {
 			#address-cells = <0x1>;
 			#size-cells = <0x0>;
 			compatible = "spidev";
 			reg = <0x0>;
-			spi-max-frequency = <0xf4240>;
+			spi-max-frequency = <0x17d7840>;
 			spi-cpha;
 			nvidia,enable-hw-based-cs;
 			nvidia,cs-setup-clk-count = <0x1e>;
