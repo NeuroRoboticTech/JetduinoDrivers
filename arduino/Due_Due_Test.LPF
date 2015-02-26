@@ -1,34 +1,13 @@
 Version2.172364 CAUTION: Do not change the contents of this file. File corruption is probable!
 DebugData497736316
-SampleData34265000000450000103
+SampleData3451071859110719735
 {
    D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,D12,D13,D14,D15,D16,D17,D18,D19,D20,D21,D22,D23,D24,D25,D26,D27,D28,D29,D30,D31,CLK1,CLK2,Count
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,50000000
-   U,U,U,U,U,U,U,U,0,0,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,0,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,2
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,2
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,4
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,1,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,79
-   U,U,U,U,U,U,U,U,1,1,1,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,1,1,1,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,68
-   U,U,U,U,U,U,U,U,0,1,1,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,1,1,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,17
-   U,U,U,U,U,U,U,U,0,1,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,1,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,51234985
-   U,U,U,U,U,U,U,U,0,0,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,0,U,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1
+   U,U,U,U,U,U,U,U,0,U,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,10718597
+   U,U,U,U,U,U,U,U,0,U,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1
+   U,U,U,U,U,U,U,U,0,U,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,108376921
+   U,U,U,U,U,U,U,U,0,U,0,0,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1
 }
 ShowGraticuleTrue
 ShowTriggerTrue
@@ -37,8 +16,8 @@ LastVisibleCursor1
 UnitsTimeTrue
 ColumnsVisibleTrue
 ScaleRelativeToReferenceTrue
-ScaleFactor0.0000005
-ReferenceOffset99
+ScaleFactor0.000005
+ReferenceOffset1144
 ReferencePosition1
 StatesOnlyTrue
 CursorSnapTrue
@@ -46,17 +25,17 @@ SaveOnAcqFalse
 SaveOnAcqAction0
 SaveOnAcqMaxFiles1
 SaveOnAcqHoldoff0
-USB_ErrorCount8
+USB_ErrorCount9
 InvertedChannelListFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalse
 ExportFormat2
 ExportRadix1
 ExportFile
-CursorOffsetSamples-16165082115148
-CursorOffsetTime-0.0000001650.0000001650.0000004950.0000008250.0000011550.000001485
+CursorOffsetSamples59059599165231297
+CursorOffsetTime0.000002950.0000029750.0000004950.0000008250.0000011550.000001485
 CursorInterlock-1-1-1-1-1-1
 ControlSelections032445674567
-ControlValues1515501.432301
-SignalsData0Data1Data2Data3Data4Data5Data6Data7SCKCSMOSIMISOData12Data13Data14Data15Data16Data17Data18Data19Data20Data21Data22Data23Data24Data25Data26Data27Data28Data29Data30Data31Clock1Clock2
+ControlValues161691.732301
+SignalsData0Data1Data2Data3Data4Data5Data6Data7SCKCS_OLDMOSIMISOData12Data13Data14Data15Data16Data17Data18Data19Data20Data21Data22Data23Data24Data25Data26Data27Data28Data29Data30Data31CSClock2
 GroupData[3..0]121-1True0,1,2,3False0-1
 GroupData[7..0]121-1True0,1,2,3,4,5,6,7False0-1
 GroupData[15..0]121-1True0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15False0-1
@@ -68,10 +47,15 @@ GroupRS232 Example121-1True0False028False009600True12False0
 GroupCAN Example121-1True0False04125000012True0.750True0.25
 Group1-Wire Example121-1True0False06False200
 GroupSmart Card Example121-1True0False038False219600True02False00
-Row9False-12850False1True-1
+GroupSPI_Test1215True10,8,32False0108True0False0.00000100.00001023200FalseFalseFalseTrue
+Row32False-12850False1True-1
 Row8False-12850False1True-1
 Row10False-12850False1True-1
 Row11False-12850False1True-1
+Row11True-1285-1False2True-1
+Row10False52850False1True-1
+Row8False52850False1True-1
+Row32False52850False1True-1
 Column40650 
 Column50650 
 Column10650 
@@ -79,12 +63,12 @@ Column20650
 Column306500
 Pattern00000000000000000000000000000000000
 Pattern10000000000000000000000000000000000
-Edge01000000010000000000000000000000000
+Edge01000000002000000000000000000000020
 Edge10000000000000000000000000000000000
 IsDemoDataFalse
 AcquiredSampleMode1
-AcquiredSamplePeriod0.00000001
-AcquiredChannelListFalseFalseFalseFalseFalseFalseFalseFalseTrueTrueTrueTrueFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalse
+AcquiredSamplePeriod0.000000005
+AcquiredChannelListFalseFalseFalseFalseFalseFalseFalseFalseTrueFalseTrueTrueFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseTrueFalse
 PrintCaptionTrue
 PrintDateTrue
 PrintMeasurementsTrue
@@ -111,7 +95,7 @@ DurationRight2E-62E-6
 DurationUnits00
 TimingModeTrue
 StateClockDelay1
-StateClockPolarity0
+StateClockPolarity1
 StateClockSelect0
 StateClockRate1.000000E+3
 StateClockUnits1
@@ -121,6 +105,6 @@ PostfillTimeout2
 QualifyStateSamplingFalse
 QualifierPolarity1
 MeasurementType0124
-MeasurementLeftTerm0202
-MeasurementRightTerm1343
+MeasurementLeftTerm0222
+MeasurementRightTerm1333
 NotesString//

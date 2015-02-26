@@ -9,10 +9,12 @@
 
 // assumes MSB
 static BitOrder bitOrder = MSBFIRST;
+static int g_iWriteCount = 0;
 
 #define SPI_BUFF_SIZE 10
 uint8_t rx_buffer[SPI_BUFF_SIZE];
 uint8_t tx_buffer[SPI_BUFF_SIZE];
+uint8_t tx_buffer2[SPI_BUFF_SIZE];
 
 /** Use SAM3X DMAC if nonzero */
 #define USE_SAM3X_DMAC 1
@@ -188,6 +190,37 @@ static void spiSend(const uint8_t* buf, size_t len) {
   uint8_t b = pSpi->SPI_RDR;
 }
 
+//------------------------------------------------------------------------------
+/** SPI receive multiple bytes */
+static uint8_t spiSendReceive(uint8_t* outBuf, uint8_t* inBuf, size_t len) {
+  Spi* pSpi = SPI0;
+  int rtn = 0;
+
+  // clear overrun error
+  uint32_t s = pSpi->SPI_SR;
+
+  spiDmaRX(inBuf, len);
+  spiDmaTX(outBuf, len);
+
+  uint32_t m = millis();
+  while (!dmac_channel_transfer_done(SPI_DMAC_RX_CH || !dmac_channel_transfer_done(SPI_DMAC_TX_CH))) {
+    //if ((millis() - m) > SAM3X_DMA_TIMEOUT)  {
+    //  dmac_channel_disable(SPI_DMAC_RX_CH);
+    //  dmac_channel_disable(SPI_DMAC_TX_CH);
+    //  rtn = 2;
+    //  Serial.println("Timed out!");
+    //  break;
+    //}
+  }
+  if (pSpi->SPI_SR & SPI_SR_OVRES) rtn |= 1;
+
+  while ((pSpi->SPI_SR & SPI_SR_TXEMPTY) == 0) {}
+  // leave RDR empty
+  uint8_t b = pSpi->SPI_RDR;
+  
+  return rtn;
+}
+
 #define PRREG(x) Serial.print(#x" 0x"); Serial.println(x,HEX)
 
 void prregs() {
@@ -198,26 +231,40 @@ void prregs() {
 
 #define SS 10
 void setup() {
-	Serial.begin(57600);
-	while(!Serial);
-        Serial.println("Starting setup");
+  Serial.begin(57600);
+  while(!Serial);
+  Serial.println("Starting setup");
         
-	slaveBegin(SS);
-	prregs();  // debug
+  slaveBegin(SS);
+  prregs();  // debug
 
+  for(int iIdx=0; iIdx<SPI_BUFF_SIZE; iIdx++)
+  {
+    tx_buffer[iIdx] = (uint8_t) (97+iIdx);
+    tx_buffer2[iIdx] = (uint8_t) (98+iIdx);
+  }    
         //Serial.print("REG_SPI0_CSR: ");
         //Serial.println(SPI_MODE0);
 }
 
 void loop() {
   Serial.println("Waiting");
-  spiRec(rx_buffer,SPI_BUFF_SIZE);
-  Serial.println("Received data");
+  //if(!g_iWriteCount)
+    spiSendReceive(tx_buffer,rx_buffer,SPI_BUFF_SIZE);
+  //else
+  //  spiSendReceive(tx_buffer2,rx_buffer,SPI_BUFF_SIZE);
   
+  String strOut, strIn;
   for(int iIdx=0; iIdx<SPI_BUFF_SIZE; iIdx++)
   {
-    Serial.print(rx_buffer[iIdx], HEX);
-    Serial.print(",");
+    strIn += (String(rx_buffer[iIdx], HEX) + ",");
+    strOut += (String(tx_buffer[iIdx], HEX) + ",");
   }
-  Serial.println("");
+  Serial.println("Received data");
+  Serial.println(strIn);
+  Serial.println("Sent data");
+  Serial.println(strOut);
+
+  //g_iWriteCount=1;
 }
+
