@@ -135,20 +135,20 @@ static void dumpstat(const char *name, int fd)
 		name, mode, bitsr, bitsw, lsb ? "(lsb first) " : "", speed);
 }
 
-void do_msg(int fd, unsigned char out, int len)
+void do_msg(int fd)
 {
 	struct spi_ioc_transfer	xfer[1];
-	unsigned char		txbuf[32], rxbuf[32], *bp;
+	unsigned char txbuf[32], rxbuf[32], *bp = NULL;
 	int			status;
+	int len = BUFF_SIZE;
 
 	memset(xfer, 0, sizeof xfer);
-	memset(txbuf, out, sizeof txbuf);
+	memset(txbuf, 0, sizeof txbuf);
 	memset(rxbuf, 0, sizeof rxbuf);
 
-	if (len > (int) sizeof txbuf)
-		len = sizeof txbuf;
+	for(int i=0; i<len; i++)
+        txbuf[i] = 65+i; //65+i;
 
-	//txbuf[0] = out;
 	xfer[0].tx_buf = (unsigned long) txbuf;
 	xfer[0].rx_buf = (unsigned long) rxbuf;
 	xfer[0].len = len;
@@ -164,70 +164,7 @@ void do_msg(int fd, unsigned char out, int len)
 		printf(" %02x", *bp++);
 	printf("\n");
 }
-/*
-void do_msg(int fd, unsigned char out, int len)
-{
-	struct spi_ioc_transfer	xfer[2];
-	unsigned char		txbuf[32], rxbuf[32], *bp;
-	int			status;
 
-	memset(xfer, 0, sizeof xfer);
-	memset(txbuf, out, sizeof txbuf);
-	memset(rxbuf, 0, sizeof rxbuf);
-
-	if (len > (int) sizeof txbuf)
-		len = sizeof txbuf;
-
-	//txbuf[0] = out;
-	xfer[0].tx_buf = (unsigned long) txbuf;
-	xfer[0].len = len;
-
-	xfer[1].rx_buf = (unsigned long) rxbuf;
-	xfer[1].len = len;
-
-	status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
-	if (status < 0) {
-		perror("SPI_IOC_MESSAGE");
-		return;
-	}
-
-	printf("response(%2d, %2d): ", len, status);
-	for (bp = rxbuf; len; len--)
-		printf(" %02x", *bp++);
-	printf("\n");
-}
-*/
-/*
-void do_msg(int fd, unsigned int len)
-{
-	struct spi_ioc_transfer	xfer[2];
-	int			status;
-
-	if (len > sizeof outBuffer)
-		len = sizeof outBuffer;
-
-	xfer[0].tx_buf = (unsigned long) outBuffer;
-	xfer[0].len = len;
-	//xfer[0].cs_change = 1;
-	//xfer[0].delay_usecs = 1;
-
-	xfer[1].rx_buf = (unsigned long) inBuffer;
-	xfer[1].len = len;
-	//xfer[1].cs_change = 1;
-	//xfer[1].delay_usecs = 1;
-
-	status = ioctl(fd, SPI_IOC_MESSAGE(2), xfer);
-	if (status < 0) {
-		perror("SPI_IOC_MESSAGE");
-		return;
-	}
-
-	printf("response(%2d, %2d): ", len, status);
-	for (unsigned char *bp = inBuffer; len; len--)
-		printf(" %02x", *bp++);
-	printf("\n");
-}
-*/
 int main (void)
 {
     timespec startTime, endTime;
@@ -288,7 +225,7 @@ int main (void)
         //char iVal = 100;
         //for(int i=0; i<64; i++)
         //{
-            do_msg(deviceHandle, 65, BUFF_SIZE);
+            do_msg(deviceHandle);
         //readBytes = read(deviceHandle, inBuffer, 10);
         //    //iVal = outBuffer[0];
         //}
