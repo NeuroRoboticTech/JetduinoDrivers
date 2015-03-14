@@ -9,7 +9,6 @@
 
 // assumes MSB
 static BitOrder bitOrder = MSBFIRST;
-static int g_iWriteCount = 0;
 
 #define SPI_BUFF_SIZE 10
 uint8_t rx_buffer[SPI_BUFF_SIZE];
@@ -149,13 +148,6 @@ static uint8_t spiRec(uint8_t* buf, size_t len) {
 
   uint32_t m = millis();
   while (!dmac_channel_transfer_done(SPI_DMAC_RX_CH)) {
-    //if ((millis() - m) > SAM3X_DMA_TIMEOUT)  {
-    //  dmac_channel_disable(SPI_DMAC_RX_CH);
-    //  dmac_channel_disable(SPI_DMAC_TX_CH);
-    //  rtn = 2;
-    //  Serial.println("Timed out!");
-    //  break;
-    //}
   }
   if (pSpi->SPI_SR & SPI_SR_OVRES) rtn |= 1;
 #else  // USE_SAM3X_DMAC
@@ -204,13 +196,6 @@ static uint8_t spiSendReceive(uint8_t* outBuf, uint8_t* inBuf, size_t len) {
 
   uint32_t m = millis();
   while (!dmac_channel_transfer_done(SPI_DMAC_RX_CH || !dmac_channel_transfer_done(SPI_DMAC_TX_CH))) {
-    //if ((millis() - m) > SAM3X_DMA_TIMEOUT)  {
-    //  dmac_channel_disable(SPI_DMAC_RX_CH);
-    //  dmac_channel_disable(SPI_DMAC_TX_CH);
-    //  rtn = 2;
-    //  Serial.println("Timed out!");
-    //  break;
-    //}
   }
   if (pSpi->SPI_SR & SPI_SR_OVRES) rtn |= 1;
 
@@ -243,16 +228,11 @@ void setup() {
     tx_buffer[iIdx] = (uint8_t) (97+iIdx);
     tx_buffer2[iIdx] = (uint8_t) (98+iIdx);
   }    
-        //Serial.print("REG_SPI0_CSR: ");
-        //Serial.println(SPI_MODE0);
 }
 
 void loop() {
   Serial.println("Waiting");
-  //if(!g_iWriteCount)
-    spiSendReceive(tx_buffer,rx_buffer,SPI_BUFF_SIZE);
-  //else
-  //  spiSendReceive(tx_buffer2,rx_buffer,SPI_BUFF_SIZE);
+  spiSendReceive(tx_buffer,rx_buffer,SPI_BUFF_SIZE);
   
   String strOut, strIn;
   for(int iIdx=0; iIdx<SPI_BUFF_SIZE; iIdx++)
@@ -264,7 +244,5 @@ void loop() {
   Serial.println(strIn);
   Serial.println("Sent data");
   Serial.println(strOut);
-
-  //g_iWriteCount=1;
 }
 
