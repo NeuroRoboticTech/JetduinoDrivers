@@ -185,9 +185,8 @@ int main (void)
         inBuffer[i] = 0;
     }
 
-	// open device on /dev/i2c-0
+	// open device on /dev/spidev0.0
 	if ((deviceHandle = open("/dev/spidev0.0", O_RDWR)) < 0) {
-	//if ((deviceHandle0 = open("/dev/i2c-0", O_RDWR)) < 0) {
 		printf("Error: Couldn't open device 0! %d\n", deviceHandle);
 		return 1;
 	}
