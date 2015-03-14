@@ -1,25 +1,16 @@
 /*
 =================================================================================
- Name        : i2c-arduino.c
+ Name        : ArduinoSPI
  Version     : 0.1
 
- Copyright (C) 2012 by Andre Wussow, 2012, desk@binerry.de
+ Copyright (C) 2015 by NeuroRoboticTechnologies, LLC, 2015,
+ dcofer@NeuroRoboticTech.com
 
  Description :
-     Sample of controlling an Arduino connected to Raspberry Pi via I2C.
-
-	 Recommended connection (http://www.raspberrypi.org/archives/384):
-	 Arduino pins      I2C-Shifter      Raspberry Pi
-	 GND                                P06  - GND
-	 5V                5V
-	 SDA               SDA2
-	 SCL               SCL2
-	                   3V3              P01 - 3.3V
-					   SDA1             P03 - SDA
-					   SCL1             P05 - SCL
+     Sending data to an Arduino using the SPI on the Jetson TK1.
 
  References  :
- http://binerry.de/post/27128825416/raspberry-pi-with-i2c-arduino-slave
+http://neurorobotictech.com/Community/Blog/tabid/184/ID/11/Using-the-Jetson-TK1-SPI--Part-1-Why-is-SPI-important.aspx
 
 ================================================================================
 This sample is free software; you can redistribute it and/or
@@ -79,6 +70,10 @@ Lesser General Public License for more details.
 int deviceHandle;
 int readBytes;
 #define BUFF_SIZE 10
+
+//Uncomment out this line to switch to software cs control
+//#define CS_SOFTWARE_CONTROL 1
+
 unsigned char inBuffer[BUFF_SIZE];
 unsigned char outBuffer[BUFF_SIZE];
 
@@ -169,28 +164,26 @@ int main (void)
 {
     timespec startTime, endTime;
 
-    std::ofstream myfile;
-    myfile.open ("Data.txt");
-
 	// print infos
 	printf("SPI Arduino Sample\n");
 	printf("========================================\n");
 
-    //printf("Exporting pin 57\r\n");
-    //gpio_export(57);
+#ifdef CS_SOFTWARE_CONTROL
+    printf("Exporting pin 57\r\n");
+    gpio_export(57);
 
-    //gpio_set_dir(57, OUTPUT_PIN);
+    gpio_set_dir(57, OUTPUT_PIN);
 
     //Keep the chipselect high till we want to write something
-    //gpio_set_value(57, true);
+    gpio_set_value(57, true);
+#endif
 
 	// initialize buffer
 	for(int i=0; i<BUFF_SIZE; i++)
     {
-        outBuffer[i] = 65+i; //65+i;
+        outBuffer[i] = 65+i;
         inBuffer[i] = 0;
     }
-    //outBuffer[1] = 0;//+= 1;
 
 	// open device on /dev/i2c-0
 	if ((deviceHandle = open("/dev/spidev0.0", O_RDWR)) < 0) {
@@ -201,55 +194,34 @@ int main (void)
 
     dumpstat("spidev0.0", deviceHandle);
 
+#ifdef CS_SOFTWARE_CONTROL
     //Lower chip select
-    //gpio_set_value(57, false);
+    gpio_set_value(57, false);
+#endif
 
-    double dblTotal = 0;
-    //for(int iIter=0; iIter<12; iIter++)
-    //{
-        clock_gettime(CLOCK_REALTIME, &startTime);
+    clock_gettime(CLOCK_REALTIME, &startTime);
 
-        //readBytes = write(deviceHandle, outBuffer, 10);
-        //readBytes = write(deviceHandle, outBuffer, 2);
+    //Example of doing a pure write out to the SPI
+    //readBytes = write(deviceHandle, outBuffer, 10);
 
-        // Send out data
-        //for(int i=0; i<4; i++)
-        //{
-        //    readBytes = write(deviceHandle, outBuffer, 1);
-        //     //outBuffer[0] += 1;
-        //}
-        //readBytes = write(deviceHandle, outBuffer, 1);
-        //readBytes = write(deviceHandle, outBuffer+1, 1);
+    //Example of doing a pure read from the SPI
+    //readBytes = read(deviceHandle, inBuffer, 10);
 
-        // Recieve data
-        //char iVal = 100;
-        //for(int i=0; i<64; i++)
-        //{
-            do_msg(deviceHandle);
-        //readBytes = read(deviceHandle, inBuffer, 10);
-        //    //iVal = outBuffer[0];
-        //}
+    //example of doing a full-duplex read-write to the SPI
+    do_msg(deviceHandle);
 
+    //Display the time for the entire operation.
+    clock_gettime(CLOCK_REALTIME, &endTime);
+    double dbltime = diff(startTime,endTime).tv_sec + (double) (diff(startTime,endTime).tv_nsec/1e9);
+    std::cout<<dbltime<<"\n";
 
-        clock_gettime(CLOCK_REALTIME, &endTime);
-        double dbltime = diff(startTime,endTime).tv_sec + (double) (diff(startTime,endTime).tv_nsec/1e9);
-        std::cout<<dbltime<<"\n";
-        dblTotal += dbltime;
-
-        myfile << dbltime << "\n";
-    //}
-
-    double dblAvg = dblTotal/10;
-    std::cout<< "Average: " << dblAvg <<"\n";
-
+#ifdef CS_SOFTWARE_CONTROL
     //Raise chip select again
-    //gpio_set_value(57, true);
+    gpio_set_value(57, true);
+#endif
 
 	// close connection and return
 	close(deviceHandle);
-	//close(deviceHandle1);
-
-	myfile.close();
 
 	return 0;
 }
