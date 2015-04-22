@@ -8,6 +8,7 @@ void setup()
 
 void loop()
 {
+  Serial.println("Requesting from Slave 2");
   Wire.requestFrom(2, 6);    // request 6 bytes from slave device #2
 
   while(Wire.available())    // slave may send less than requested
@@ -16,5 +17,7 @@ void loop()
     Serial.print(c);         // print the character
   }
 
+  Serial.println("");
+  
   delay(500);
 }
