@@ -2,7 +2,7 @@
 
 void setup()
 {
-  Wire.begin(2);                // join i2c bus with address #2
+  Wire.begin(1);                // join i2c bus with address #2
   Wire.onRequest(requestEvent); // register event
 }
 
@@ -15,6 +15,6 @@ void loop()
 // this function is registered as an event, see setup()
 void requestEvent()
 {
-  Wire.write("hello "); // respond with message of 6 bytes
+  Wire.write("Slave 1"); // respond with message of 6 bytes
                        // as expected by master
 }

@@ -57,7 +57,7 @@ void setup() {
   Serial.begin(9600);
   // Initialize slave LED pin.
   pinMode(led, OUTPUT);
-  digitalWrite(led, ledState);
+  //digitalWrite(led, ledState);
   // Initialize SPI Slave.
   SlaveInit();
   Serial.println("Slave Initialized");
@@ -83,7 +83,7 @@ void loop() {
         Serial.println("rx:" + String(rx) + ".");
         // Toggle LED State
         ledState = !ledState;
-        digitalWrite(led, ledState);
+        //digitalWrite(led, ledState);
       }
       // cmdLEDState?
       else if (rx == cmdLEDState) {
