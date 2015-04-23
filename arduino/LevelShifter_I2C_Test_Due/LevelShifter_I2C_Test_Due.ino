@@ -6,10 +6,12 @@ void setup()
   Serial.begin(9600);  // start serial for output
 }
 
-void loop()
+void ReadData(int addr)
 {
-  Serial.println("Requesting from Slave 2");
-  Wire.requestFrom(2, 6);    // request 6 bytes from slave device #2
+  Serial.print("Requesting from Slave ");
+  Serial.println(addr);
+
+  Wire.requestFrom(addr, 7);    // request 6 bytes from slave device #2
 
   while(Wire.available())    // slave may send less than requested
   { 
@@ -17,7 +19,13 @@ void loop()
     Serial.print(c);         // print the character
   }
 
-  Serial.println("");
+  Serial.println("");  
+}
+
+void loop()
+{  
+  ReadData(1);
+  ReadData(2);
   
   delay(500);
 }
