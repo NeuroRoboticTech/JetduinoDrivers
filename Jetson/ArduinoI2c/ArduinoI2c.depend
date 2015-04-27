@@ -13,3 +13,43 @@
 	<linux/types.h>
 	<linux/spi/spidev.h>
 
+1430139523 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/ArduinoI2c/i2c-arduino.cpp
+	<iostream>
+	<linux/types.h>
+	<stdbool.h>
+	<dlfcn.h>
+	<utime.h>
+	<sys/stat.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/timeb.h>
+	<exception>
+	<string>
+	<iosfwd>
+	<sstream>
+	<fstream>
+	<iterator>
+	<iostream>
+	<vector>
+	<deque>
+	<stack>
+	<map>
+	<list>
+	<unordered_set>
+	<stdio.h>
+	<stdint.h>
+	<stdlib.h>
+	<cctype>
+	<math.h>
+	<memory.h>
+	<algorithm>
+	<string.h>
+	<time.h>
+	<errno.h>
+	<fcntl.h>
+	<poll.h>
+	<getopt.h>
+	<sys/ioctl.h>
+	<linux/i2c-dev.h>
+	<linux/i2c.h>
+

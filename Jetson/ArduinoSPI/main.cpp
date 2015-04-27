@@ -95,7 +95,7 @@ timespec diff(timespec start, timespec end)
 static void dumpstat(const char *name, int fd)
 {
 	__u8	mode, lsb, bitsr=8, bitsw;
-	__u32	speed=25000000;
+	__u32	speed=22000000;
 
 	if (ioctl(fd, SPI_IOC_RD_MODE, &mode) < 0) {
 		perror("SPI rd_mode");

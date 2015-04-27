@@ -29,12 +29,11 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="i2c-arduino.c">
-			<Option compilerVar="CC" />
-		</Unit>
+		<Unit filename="i2c-arduino.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
