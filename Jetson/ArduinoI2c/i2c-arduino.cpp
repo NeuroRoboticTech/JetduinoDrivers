@@ -104,10 +104,10 @@ int main (void)
 	// address of i2c Arduino device 1
     int device1I2CAddress = 0x01;  // (0x01 = 42)
 
-    std::string i2c_port = "/dev/i2c-0"; //GEN1_I2C
+    //std::string i2c_port = "/dev/i2c-0"; //GEN1_I2C
     //std::string i2c_port = "/dev/i2c-1"; //GEN2_I2C
-    //std::string i2c_port = "/dev/i2c-2"; //PWR_I2C
-    //std::string i2c_port = "/dev/i2c-4"; //CAM_I2C
+    std::string i2c_port = "/dev/i2c-2"; //CAM_I2C
+    //std::string i2c_port = "/dev/i2c-4"; //PWR_I2C
 
 	// open device on /dev/i2c-0
 	if ((device1Handle = open(i2c_port.c_str(), O_RDWR)) < 0) {

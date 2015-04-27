@@ -1,0 +1,69 @@
+# depslib dependency file v1.0
+1430175281 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/ArduinoSerial/main.cpp
+	<iostream>
+	"ofSerialLinux.h"
+
+1430169228 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/ArduinoSerial/ofSerialLinux.h
+	"ofConstants.h"
+	"ofTypes.h"
+	<termios.h>
+	<stdint.h>
+
+1413597429 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/ArduinoSerial/ofConstants.h
+	<stdint.h>
+	<TargetConditionals.h>
+	<windows.h>
+	<stdint.h>
+	<functional>
+	<unistd.h>
+	"GL/glew.h"
+	<OpenGL/gl.h>
+	<ApplicationServices/ApplicationServices.h>
+	<unistd.h>
+	"bcm_host.h"
+	<typeinfo>
+	<unistd.h>
+	<GLES/gl.h>
+	<GLES/glext.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<cstdlib>
+	<cstdio>
+	<cstdarg>
+	<cmath>
+	<ctime>
+	<cstdlib>
+	<string>
+	<iostream>
+	<vector>
+	<cstring>
+	<sstream>
+	<iomanip>
+	<fstream>
+	<algorithm>
+	<cfloat>
+
+1430169196 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/ArduinoSerial/ofTypes.h
+	"ofConstants.h"
+	<memory>
+	<tr1/memory>
+
+1430169246 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/ArduinoSerial/ofSerialLinux.cpp
+	"ofSerialLinux.h"
+	"ofTypes.h"
+	<sys/types.h>
+	<fcntl.h>
+	<errno.h>
+	<sys/select.h>
+	<termios.h>
+	<unistd.h>
+	<dirent.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+	<linux/serial.h>
+	<getopt.h>
+	<fcntl.h>
+	<errno.h>
+	<ctype.h>
+	<algorithm>
+
