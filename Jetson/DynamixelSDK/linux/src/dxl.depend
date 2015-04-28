@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1400095775 source:/media/Ubuntu_Data/AnimatLabSDK/3rdParty/DynamixelSDK/linux/src/dxl_hal.cpp
+	<stdio.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<termios.h>
+	<linux/serial.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	"dxl_hal.h"
+
+1400095775 /media/Ubuntu_Data/AnimatLabSDK/3rdParty/DynamixelSDK/linux/src/dxl_hal.h
+
