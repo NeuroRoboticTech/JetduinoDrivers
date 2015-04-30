@@ -28,13 +28,14 @@ int main()
 	int GoalPos[2] = {0, 1023};
 	//int GoalPos[2] = {0, 4095}; // for Ex series
 	int index = 0;
-	int deviceIndex = 0;
+	//int deviceIndex = 0;
 	int Moving, PresentPos;
 	int CommStatus;
 
 	printf( "\n\nRead/Write example for Linux\n\n" );
 	///////// Open USB2Dynamixel ////////////
-	if( dxl_initialize(deviceIndex, baudnum) == 0 )
+	//if( dxl_initialize(deviceIndex, baudnum) == 0 )
+	if( dxl_initialize_name("/dev/ttyTHS1", baudnum, 166) == 0 )
 	{
 		printf( "Failed to open USB2Dynamixel!\n" );
 		printf( "Press Enter key to terminate...\n" );
@@ -80,7 +81,7 @@ int main()
 					if( index == 0 )
 						index = 1;
 					else
-						index = 0;					
+						index = 0;
 				}
 
 				PrintErrorCode();

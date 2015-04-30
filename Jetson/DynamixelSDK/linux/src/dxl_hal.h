@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 
-int dxl_hal_open(int deviceIndex, float baudrate);
+int dxl_hal_open(char *dev_name, float baudrate, int gpio_ctrl);
 void dxl_hal_close();
 int dxl_hal_set_baud( float baudrate );
 void dxl_hal_clear();

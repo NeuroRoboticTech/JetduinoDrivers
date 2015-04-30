@@ -12,3 +12,37 @@
 
 1400095775 /media/Ubuntu_Data/AnimatLabSDK/3rdParty/DynamixelSDK/linux/src/dxl_hal.h
 
+1430223451 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/src/dxl_hal.cpp
+	<stdio.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<termios.h>
+	<linux/serial.h>
+	<sys/ioctl.h>
+	<sys/time.h>
+	"dxl_hal.h"
+	"gpio.h"
+
+1430218373 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/src/dxl_hal.h
+
+1430219023 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/src/dynamixel.cpp
+	<stdio.h>
+	<string.h>
+	"dxl_hal.h"
+	"dynamixel.h"
+
+1430219023 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/include/dynamixel.h
+
+1430077531 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/src/gpio.h
+
+1430218338 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/src/gpio.cpp
+	"gpio.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<errno.h>
+	<unistd.h>
+	<fcntl.h>
+	<poll.h>
+
