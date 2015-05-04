@@ -1,6 +1,6 @@
 #include <DynamixelSerial1.h>
 
-int Position = 0;
+int ref_pos = 0;
 
 void setup () {
  
@@ -43,7 +43,7 @@ void setup () {
   Dynamixel.move (1,512);
   delay(1000);
   
-  Position = Dynamixel.readPosition(1);
+  ref_pos = Dynamixel.readPosition(1);
   delay (100); 
 } 
 
@@ -66,9 +66,9 @@ void ReadPosWithError(int servo)
     if(pos < 0)
       errors++;   
    
-    if(pos != Position)
+    if(pos != ref_pos)
     {
-       pos_vals[pos_errors] = Positin - pos;
+       pos_vals[pos_errors] = ref_pos - pos;
        pos_errors++;   
     }
   }
