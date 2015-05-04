@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="dxl">
-		<Project filename="dxl.cbp" active="1">
-		</Project>
+		<Project filename="dxl.cbp" />
+		<Project filename="../example/ReadWrite/ReadWrite.cbp" />
+		<Project filename="../example/SyncWrite/SyncWrite.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

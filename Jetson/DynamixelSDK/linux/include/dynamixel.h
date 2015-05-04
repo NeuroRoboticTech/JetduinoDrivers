@@ -8,6 +8,7 @@ extern "C" {
 
 ///////////// device control methods ////////////////////////
 int dxl_initialize(int deviceIndex, int baudnum );
+int dxl_initialize_name(char *dev_name, int baudnum, int gpio_ctrl );
 void dxl_terminate();
 
 

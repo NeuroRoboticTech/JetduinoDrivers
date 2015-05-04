@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "dxl_hal.h"
 #include "dynamixel.h"
 
@@ -15,13 +18,21 @@ unsigned char gbRxGetLength = 0;
 int gbCommStatus = COMM_RXSUCCESS;
 int giBusUsing = 0;
 
-
 int dxl_initialize(int deviceIndex, int baudnum )
 {
-	float baudrate;	
+	char dev_name[100] = {0, };
+
+	sprintf(dev_name, "/dev/ttyUSB%d", deviceIndex);
+
+    return dxl_initialize_name(dev_name, baudnum, -1);
+}
+
+int dxl_initialize_name(char *dev_name, int baudnum, int gpio_ctrl )
+{
+	float baudrate;
 	baudrate = 2000000.0f / (float)(baudnum + 1);
 
-	if( dxl_hal_open(deviceIndex, baudrate) == 0 )
+	if( dxl_hal_open(dev_name, baudrate, gpio_ctrl) == 0 )
 		return 0;
 
 	gbCommStatus = COMM_RXSUCCESS;
@@ -42,7 +53,7 @@ void dxl_tx_packet(void)
 
 	if( giBusUsing == 1 )
 		return;
-	
+
 	giBusUsing = 1;
 
 	if( gbInstructionPacket[LENGTH] > (MAXNUM_TXPARAM+2) )
@@ -51,7 +62,7 @@ void dxl_tx_packet(void)
 		giBusUsing = 0;
 		return;
 	}
-	
+
 	if( gbInstructionPacket[INSTRUCTION] != INST_PING
 		&& gbInstructionPacket[INSTRUCTION] != INST_READ
 		&& gbInstructionPacket[INSTRUCTION] != INST_WRITE
@@ -64,13 +75,13 @@ void dxl_tx_packet(void)
 		giBusUsing = 0;
 		return;
 	}
-	
+
 	gbInstructionPacket[0] = 0xff;
 	gbInstructionPacket[1] = 0xff;
 	for( i=0; i<(gbInstructionPacket[LENGTH]+1); i++ )
 		checksum += gbInstructionPacket[i+2];
 	gbInstructionPacket[gbInstructionPacket[LENGTH]+3] = ~checksum;
-	
+
 	if( gbCommStatus == COMM_RXTIMEOUT || gbCommStatus == COMM_RXCORRUPT )
 		dxl_hal_clear();
 
@@ -106,13 +117,13 @@ void dxl_rx_packet(void)
 		giBusUsing = 0;
 		return;
 	}
-	
+
 	if( gbCommStatus == COMM_TXSUCCESS )
 	{
 		gbRxGetLength = 0;
 		gbRxPacketLength = 6;
 	}
-	
+
 	nRead = dxl_hal_rx( (unsigned char*)&gbStatusPacket[gbRxGetLength], gbRxPacketLength - gbRxGetLength );
 	gbRxGetLength += nRead;
 	if( gbRxGetLength < gbRxPacketLength )
@@ -127,7 +138,7 @@ void dxl_rx_packet(void)
 			return;
 		}
 	}
-	
+
 	// Find packet header
 	for( i=0; i<(gbRxGetLength-1); i++ )
 	{
@@ -139,13 +150,13 @@ void dxl_rx_packet(void)
 		{
 			break;
 		}
-	}	
+	}
 	if( i > 0 )
 	{
 		for( j=0; j<(gbRxGetLength-i); j++ )
 			gbStatusPacket[j] = gbStatusPacket[j + i];
-			
-		gbRxGetLength -= i;		
+
+		gbRxGetLength -= i;
 	}
 
 	if( gbRxGetLength < gbRxPacketLength )
@@ -161,7 +172,7 @@ void dxl_rx_packet(void)
 		giBusUsing = 0;
 		return;
 	}
-	
+
 	gbRxPacketLength = gbStatusPacket[LENGTH] + 4;
 	if( gbRxGetLength < gbRxPacketLength )
 	{
@@ -185,7 +196,7 @@ void dxl_rx_packet(void)
 		giBusUsing = 0;
 		return;
 	}
-	
+
 	gbCommStatus = COMM_RXSUCCESS;
 	giBusUsing = 0;
 }
@@ -195,11 +206,11 @@ void dxl_txrx_packet(void)
 	dxl_tx_packet();
 
 	if( gbCommStatus != COMM_TXSUCCESS )
-		return;	
-	
+		return;
+
 	do{
-		dxl_rx_packet();		
-	}while( gbCommStatus == COMM_RXWAITING );	
+		dxl_rx_packet();
+	}while( gbCommStatus == COMM_RXWAITING );
 }
 
 int dxl_get_result(void)
@@ -279,7 +290,7 @@ void dxl_ping( int id )
 	gbInstructionPacket[ID] = (unsigned char)id;
 	gbInstructionPacket[INSTRUCTION] = INST_PING;
 	gbInstructionPacket[LENGTH] = 2;
-	
+
 	dxl_txrx_packet();
 }
 
@@ -292,7 +303,7 @@ int dxl_read_byte( int id, int address )
 	gbInstructionPacket[PARAMETER] = (unsigned char)address;
 	gbInstructionPacket[PARAMETER+1] = 1;
 	gbInstructionPacket[LENGTH] = 4;
-	
+
 	dxl_txrx_packet();
 
 	return (int)gbStatusPacket[PARAMETER];
@@ -307,7 +318,7 @@ void dxl_write_byte( int id, int address, int value )
 	gbInstructionPacket[PARAMETER] = (unsigned char)address;
 	gbInstructionPacket[PARAMETER+1] = (unsigned char)value;
 	gbInstructionPacket[LENGTH] = 4;
-	
+
 	dxl_txrx_packet();
 }
 
@@ -320,7 +331,7 @@ int dxl_read_word( int id, int address )
 	gbInstructionPacket[PARAMETER] = (unsigned char)address;
 	gbInstructionPacket[PARAMETER+1] = 2;
 	gbInstructionPacket[LENGTH] = 4;
-	
+
 	dxl_txrx_packet();
 
 	return dxl_makeword((int)gbStatusPacket[PARAMETER], (int)gbStatusPacket[PARAMETER+1]);
@@ -336,6 +347,6 @@ void dxl_write_word( int id, int address, int value )
 	gbInstructionPacket[PARAMETER+1] = (unsigned char)dxl_get_lowbyte(value);
 	gbInstructionPacket[PARAMETER+2] = (unsigned char)dxl_get_highbyte(value);
 	gbInstructionPacket[LENGTH] = 5;
-	
+
 	dxl_txrx_packet();
 }

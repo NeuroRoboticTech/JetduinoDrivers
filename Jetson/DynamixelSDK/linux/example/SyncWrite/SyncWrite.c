@@ -23,7 +23,7 @@
 #define DEFAULT_BAUDNUM		1 // 1Mbps
 #define NUM_ACTUATOR		3 // Number of actuator
 #define STEP_THETA			(PI / 100.0f) // Large value is more fast
-#define CONTROL_PERIOD		(10000) // usec (Large value is more slow) 
+#define CONTROL_PERIOD		(10000) // usec (Large value is more slow)
 
 void PrintCommStatus(int CommStatus);
 void PrintErrorCode(void);
@@ -32,7 +32,7 @@ int main()
 {
 	int id[NUM_ACTUATOR];
 	int baudnum = 1;
-	int deviceIndex = 0;
+	//int deviceIndex = 0;
 	float phase[NUM_ACTUATOR];
 	float theta = 0;
 	int AmpPos = 512;
@@ -50,7 +50,8 @@ int main()
 	}
 
 	///////// Open USB2Dynamixel ////////////
-	if( dxl_initialize(deviceIndex, baudnum) == 0 )
+	//if( dxl_initialize(deviceIndex, baudnum) == 0 )
+	if( dxl_initialize_name("/dev/ttyTHS1", baudnum, 166) == 0 )
 	{
 		printf( "Failed to open USB2Dynamixel!\n" );
 		printf( "Press Enter key to terminate...\n" );
@@ -59,7 +60,7 @@ int main()
 	}
 	else
 		printf( "Succeed to open USB2Dynamixel!\n" );
-	
+
 	// Set goal speed
 	dxl_write_word( BROADCAST_ID, P_GOAL_SPEED_L, 0 );
 	// Set goal position
@@ -88,10 +89,10 @@ int main()
 				dxl_set_txpacket_parameter(2+3*i+2, dxl_get_highbyte(GoalPos));
 			}
 			dxl_set_txpacket_length((2+1)*NUM_ACTUATOR+4);
-			
+
 
 			printf( "\n" );
-			
+
 			dxl_txrx_packet();
 			CommStatus = dxl_get_result();
 			if( CommStatus == COMM_RXSUCCESS )
@@ -103,7 +104,7 @@ int main()
 				PrintCommStatus(CommStatus);
 				break;
 			}
-			
+
 			theta += STEP_THETA;
 			usleep(CONTROL_PERIOD);
 

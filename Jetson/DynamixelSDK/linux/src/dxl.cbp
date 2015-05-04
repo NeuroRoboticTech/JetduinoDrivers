@@ -13,7 +13,6 @@
 				<Option compiler="gcc" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-std=c++0x" />
 					<Add option="-g" />
 					<Add option="-fPIC" />
 					<Add option="-D_DEBUG" />
@@ -23,6 +22,9 @@
 					<Add option="-shared" />
 					<Add library="dl" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="cp Debug/libdxl_debug.so ../lib/libdxl_debug.so" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Release">
 				<Option output="Release/libdxl.so" prefix_auto="0" extension_auto="0" />
@@ -32,7 +34,6 @@
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++0x" />
 					<Add option="-fPIC" />
 					<Add option="-DNDEBUG" />
 					<Add directory="../include" />
@@ -42,11 +43,16 @@
 					<Add option="-shared" />
 					<Add library="dl" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="cp Release/libdxl.so ../lib/libdxl.so" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<Unit filename="dxl_hal.cpp" />
 		<Unit filename="dxl_hal.h" />
 		<Unit filename="dynamixel.cpp" />
+		<Unit filename="gpio.cpp" />
+		<Unit filename="gpio.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
