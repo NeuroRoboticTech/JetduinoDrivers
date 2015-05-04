@@ -171,7 +171,7 @@
 #define AX_CCW_AL_L                 255 
 #define AX_CCW_AL_H                 3
 #define TIME_OUT                    10         // Este parametro depende de la velocidad de transmision
-#define TX_DELAY_TIME				400        // Este parametro depende de la velocidad de transmision - pero pueden ser cambiados para mayor velocidad.
+#define TX_DELAY_TIME				15        // Este parametro depende de la velocidad de transmision - pero pueden ser cambiados para mayor velocidad.
 #define Tx_MODE                     1
 #define Rx_MODE                     0
 #define LOCK                        1
@@ -200,6 +200,7 @@ private:
 	int Temperature_Byte;
 	int Voltage_Byte;
 	int Error_Byte; 
+	int Return_Delay_Byte;
 	  
 	int read_error(void);
 	
@@ -229,7 +230,7 @@ public:
 	int setVoltageLimit(unsigned char ID, unsigned char DVoltage, unsigned char UVoltage);
 	int setMaxTorque(unsigned char ID, int MaxTorque);
 	int setSRL(unsigned char ID, unsigned char SRL);
-	int setRDT(unsigned char ID, unsigned char RDT);
+	int setReturnDelayTime(unsigned char ID, unsigned char RDT);
 	int setLEDAlarm(unsigned char ID, unsigned char LEDAlarm);
 	int setShutdownAlarm(unsigned char ID, unsigned char SALARM);
 	int setCMargin(unsigned char ID, unsigned char CWCMargin, unsigned char CCWCMargin);
@@ -245,6 +246,7 @@ public:
 	int readPosition(unsigned char ID);
 	int readSpeed(unsigned char ID);
 	int readLoad(unsigned char ID);
+	int readReturnDelayTime(unsigned char ID);
 	
 	int torqueStatus(unsigned char ID, bool Status);
 	int ledStatus(unsigned char ID, bool Status);

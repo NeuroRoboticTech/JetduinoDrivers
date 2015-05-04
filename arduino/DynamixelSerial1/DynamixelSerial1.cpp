@@ -105,9 +105,14 @@ int DynamixelClass::read_error(void)
 			readData();                                    // Ax-12 ID
 			readData();                                    // Length
 			Error_Byte = readData();                       // Error
+			Serial.print("Received Error: ");
+			Serial.println(Error_Byte);
 				return (Error_Byte);
 		}
 	}
+
+	Serial.print("Nothing Recieved: ");
+	Serial.println(-1);
 	return (-1);											 // No Ax Response
 }
 
@@ -669,9 +674,9 @@ int DynamixelClass::setSRL(unsigned char ID, unsigned char SRL)
     return (read_error());                // Return the read error
 }
 
-int DynamixelClass::setRDT(unsigned char ID, unsigned char RDT)
+int DynamixelClass::setReturnDelayTime(unsigned char ID, unsigned char RDT)
 {    
-	Checksum = (~(ID + AX_RDT_LENGTH + AX_WRITE_DATA + AX_RETURN_DELAY_TIME + (RDT/2)))&0xFF;
+	Checksum = (~(ID + AX_RDT_LENGTH + AX_WRITE_DATA + AX_RETURN_DELAY_TIME + RDT))&0xFF;
 	
 	switchCom(Direction_Pin,Tx_MODE);
     sendData(AX_START);                // Send Instructions over Serial
@@ -680,12 +685,69 @@ int DynamixelClass::setRDT(unsigned char ID, unsigned char RDT)
 	sendData(AX_RDT_LENGTH);
     sendData(AX_WRITE_DATA);
     sendData(AX_RETURN_DELAY_TIME);
-    sendData((RDT/2));
+    sendData(RDT);
     sendData(Checksum);
 	delayus(TX_DELAY_TIME);
 	switchCom(Direction_Pin,Rx_MODE);
     
     return (read_error());                // Return the read error
+}
+/*
+int DynamixelClass::setReturnDelayTime(unsigned char ID, unsigned char Time)
+{
+	Checksum = (~(ID + AX_RDT_LENGTH +AX_WRITE_DATA+ AX_RETURN_DELAY_TIME + Time))&0xFF;
+	
+	switchCom(Direction_Pin,Tx_MODE);
+	sendData(AX_START);                     
+	sendData(AX_START);
+	sendData(ID);
+	sendData(AX_RDT_LENGTH);
+	sendData(AX_WRITE_DATA);
+	sendData(AX_RETURN_DELAY_TIME);
+    sendData(Time);
+	sendData(Checksum);
+	delayus(TX_DELAY_TIME);
+	switchCom(Direction_Pin,Rx_MODE);
+	
+    return (read_error()); 
+}
+*/
+
+int DynamixelClass::readReturnDelayTime(unsigned char ID)
+{	
+    Checksum = (~(ID + AX_RDT_LENGTH  + AX_READ_DATA + AX_RETURN_DELAY_TIME + AX_BYTE_READ))&0xFF;
+    
+	switchCom(Direction_Pin,Tx_MODE);
+    sendData(AX_START);
+    sendData(AX_START);
+    sendData(ID);
+    sendData(AX_RDT_LENGTH);
+    sendData(AX_READ_DATA);
+    sendData(AX_RETURN_DELAY_TIME);
+    sendData(AX_BYTE_READ);
+    sendData(Checksum);
+    delayus(TX_DELAY_TIME);
+	switchCom(Direction_Pin,Rx_MODE);
+	
+    Return_Delay_Byte = -1;
+    Time_Counter = 0;
+    while((availableData() < 6) & (Time_Counter < TIME_OUT)){
+		Time_Counter++;
+		delayus(1000);
+    }
+	
+    while (availableData() > 0){
+		Incoming_Byte = readData();
+		if ( (Incoming_Byte == 255) & (peekData() == 255) ){
+			readData();                            // Start Bytes
+			readData();                            // Ax-12 ID
+			readData();                            // Length
+			if( (Error_Byte = readData()) != 0 )   // Error
+				return (Error_Byte*(-1));
+			Return_Delay_Byte = readData();         // Temperature
+		}
+    }
+	return (Return_Delay_Byte);               // Returns the read temperature
 }
 
 int DynamixelClass::setLEDAlarm(unsigned char ID, unsigned char LEDAlarm)
