@@ -34,8 +34,35 @@ Lesser General Public License for more details.
 
 #include "SimpleGPIO.h"
 
-int pinCount = 11;
-int pins[] = {57, 81, 82, 84, 160, 161, 162, 163, 164, 165, 166};
+int outPinCount = 4;
+int outPins[] = {57, 81, 82, 84};
+
+int inPinCount = 7;
+int inPins[] = {160, 161, 162, 163, 164, 165, 166};
+
+void readGPIO()
+{
+    printf("Reading GPIO input pins\r\n");
+    for(int i=0; i<inPinCount; i++)
+    {
+        unsigned int val=0;
+        if(gpio_get_value(inPins[i], &val) == 0)
+            printf("Pin %d: %d\r\n", inPins[i], val);
+        else
+            printf("Error reading GPIO input pin %d\r\n", inPins[i]);
+    }
+}
+
+void writeGPIO(bool level)
+{
+    if(level)
+        printf("Setting GPIO output pins high\r\n");
+    else
+        printf("Setting GPIO output pins low\r\n");
+
+    for(int i=0; i<outPinCount; i++)
+        gpio_set_value(outPins[i], level);
+}
 
 int main (void)
 {
@@ -43,35 +70,40 @@ int main (void)
 	printf("Jetson Breakout GPIO Sample\n");
 	printf("========================================\n");
 
-//81, 82, 84
-
-    printf("Exporting GPIO pins as outputs\r\n");
-    for(int i=0; i<pinCount; i++)
+    printf("Exporting GPIO output pins\r\n");
+    for(int i=0; i<outPinCount; i++)
     {
-        gpio_export(pins[i]);
-        gpio_set_dir(pins[i], OUTPUT_PIN);
+        gpio_export(outPins[i]);
+        gpio_set_dir(outPins[i], OUTPUT_PIN);
+    }
+
+    printf("Exporting GPIO input pins\r\n");
+    for(int i=0; i<inPinCount; i++)
+    {
+        gpio_export(inPins[i]);
+        gpio_set_dir(inPins[i], INPUT_PIN);
     }
 
     for(int loop=0; loop<5; loop++)
     {
-        printf("Setting GPIO pins high\r\n");
-        //Set the GPIO pins high
-        for(int i=0; i<pinCount; i++)
-            gpio_set_value(pins[i], true);
+        writeGPIO(true);
+        readGPIO();
 
-        sleep(1);
+        sleep(2);
 
-        printf("Setting GPIO pins low\r\n");
-        //Set the GPIO pins low
-        for(int i=0; i<pinCount; i++)
-            gpio_set_value(pins[i], false);
+        writeGPIO(false);
+        readGPIO();
 
-        sleep(1);
+        sleep(2);
     }
 
-    printf("Unexporting GPIO pins\r\n");
-    for(int i=0; i<pinCount; i++)
-        gpio_unexport(pins[i]);
+    printf("Unexporting GPIO output pins\r\n");
+    for(int i=0; i<outPinCount; i++)
+        gpio_unexport(outPins[i]);
+
+    printf("Unexporting GPIO input pins\r\n");
+    for(int i=0; i<inPinCount; i++)
+        gpio_unexport(inPins[i]);
 
 	return 0;
 }
