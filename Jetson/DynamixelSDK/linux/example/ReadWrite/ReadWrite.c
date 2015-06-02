@@ -25,7 +25,7 @@ void PrintErrorCode(void);
 int main()
 {
 	int baudnum = 1;
-	int GoalPos[2] = {0, 1023};
+	int GoalPos[2] = {450, 650};
 	//int GoalPos[2] = {0, 4095}; // for Ex series
 	int index = 0;
 	//int deviceIndex = 0;
@@ -53,6 +53,9 @@ int main()
 
 		// Write goal position
 		dxl_write_word( DEFAULT_ID, P_GOAL_POSITION_L, GoalPos[index] );
+
+        index = !index;
+/*
 		do
 		{
 			// Read present position
@@ -69,6 +72,8 @@ int main()
 				PrintCommStatus(CommStatus);
 				break;
 			}
+
+            //index = !index;
 
 			// Check moving done
 			Moving = dxl_read_byte( DEFAULT_ID, P_MOVING );
@@ -92,6 +97,7 @@ int main()
 				break;
 			}
 		}while(Moving == 1);
+		*/
 	}
 
 	// Close device

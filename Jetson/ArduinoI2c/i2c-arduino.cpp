@@ -85,11 +85,11 @@ void get_data(int handle, char slave)
 	usleep(100000); // 100ms
 
 	// read success
-	readBytes = read(handle, buffer, 7);
-	if (readBytes != 7)
-		std::cout << "Error: Invalid receive!" << std::endl;
-	else
-        std::cout << "Response: " << buffer << std::endl;
+	//readBytes = read(handle, buffer, 7);
+	//if (readBytes != 7)
+	//	std::cout << "Error: Invalid receive!" << std::endl;
+	//else
+    //    std::cout << "Response: " << buffer << std::endl;
 }
 
 int main (void)
