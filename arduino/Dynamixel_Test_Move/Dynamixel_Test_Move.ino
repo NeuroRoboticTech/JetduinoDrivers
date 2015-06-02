@@ -1,4 +1,4 @@
-#include <DynamixelSerial1.h>
+#include <DynamixelSerial2.h>
 
 int ref_pos = 0;
 
@@ -25,26 +25,26 @@ void setup () {
   Serial.println("Starting setup");
   //delay (5000); 
   
-  Dynamixel.begin (1000000, 2); 
+  Dynamixel.begin (1000000, 22); 
 
   delay(1000);
-  int iError = Dynamixel.setReturnDelayTime(1, 1);
+  //int iError = Dynamixel.setReturnDelayTime(1, 1);
   //Serial.println(iError);
   
   //Dynamixel.reset(1);
 
-  delay (100); 
-  int ret_delay = Dynamixel.readReturnDelayTime(1);
-  Serial.print("Ret_Delay: ");
-  Serial.println(ret_delay);
+  //delay (100); 
+  //int ret_delay = Dynamixel.readReturnDelayTime(1);
+ // Serial.print("Ret_Delay: ");
+  //Serial.println(ret_delay);
   
   //pinMode(2, OUTPUT);
-  delay (100); 
+ // delay (100); 
   Dynamixel.move (1,512);
   delay(1000);
   
-  ref_pos = Dynamixel.readPosition(1);
-  delay (100); 
+  //ref_pos = Dynamixel.readPosition(1);
+  //delay (100); 
 } 
 
 void ReadPosWithError(int servo)
@@ -53,7 +53,7 @@ void ReadPosWithError(int servo)
   int errors = 0;
   int pos = 0, i = 0;
   double avg_time = 0;
-  int loops = 100;
+  int loops = 10;
   int pos_vals[100];
   int pos_errors = 0;
   unsigned long end_time = 0, diff = 0, start_time = micros();
@@ -118,25 +118,27 @@ void ReadPos(int servo, int target)
 
 void loop () { 
   //digitalWrite(2, HIGH);   // turn the LED on (HIGH is the voltage level)
-  //Serial.println("Move 450");
-  //Dynamixel.moveSpeed (1,450, 30); 
+  Serial.println("Move 450");
+  Dynamixel.move(1, 450); //  .moveSpeed (1,450, 30); 
 
-  //delay(30);
-  //Position = Dynamixel.readPosition(1);       // Request and Print the Position 
-  //Serial.print("Position: ");
-  //Serial.println(Position);
+  delay(2000);
+  int Position = Dynamixel.readPosition(1);       // Request and Print the Position 
+  Serial.print("Position: ");
+  Serial.println(Position);
 
-  ReadPosWithError(1);
+  //ReadPosWithError(1);
   
   //delay (2000); 
   //digitalWrite(2, LOW);   // turn the LED on (HIGH is the voltage level)
-  //Serial.println("Move 650");
+  Serial.println("Move 650");
   //Dynamixel.moveSpeed (1, 650, 30); 
+   Dynamixel.move(1, 650);
+   
+  delay(2000);
+  Position = Dynamixel.readPosition(1);       // Request and Print the Position 
+  Serial.print("Position: ");
+  Serial.println(Position);
 
-  //delay(50);
-  //Position = Dynamixel.readPosition(1);       // Request and Print the Position 
-  //ReadPos(1, 650);
-
-  delay (2000); 
+  //delay (2000); 
 } 
 
