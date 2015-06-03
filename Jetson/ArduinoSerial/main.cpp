@@ -8,7 +8,8 @@ int main()
     ofSerial _port;
 
     _port.enumerateDevices();
-    bool connected = _port.setup("ttyTHS1", 1000000);
+    //bool connected = _port.setup("ttyTHS0", 1000000);  //BR_UART_1
+    bool connected = _port.setup("ttyTHS1", 1000000);  //UART2_TXD
 
     //_port.writeByte('A');
 
@@ -19,9 +20,10 @@ int main()
         char c = _port.readByte();
         std::cout << c;
     }
+    std::cout << std::endl;
 
-    //std::string data = "This is a test!";
-    //_port.writeBytes((unsigned char *) data.c_str(), data.length());
+    std::string data = "This is a test!";
+    _port.writeBytes((unsigned char *) data.c_str(), data.length());
 
     _port.close();
 

@@ -78,18 +78,18 @@ void get_data(int handle, char slave)
 {
     char command[3] = {(char) (65+slave), 66, 67};
 
-	//std::cout << "sending to slave " << slave << std::endl;
+	std::cout << "sending to slave " << slave << std::endl;
 	readBytes = write(handle, command, 3);
 
 	// give arduino some reaction time
 	usleep(100000); // 100ms
 
 	// read success
-	//readBytes = read(handle, buffer, 7);
-	//if (readBytes != 7)
-	//	std::cout << "Error: Invalid receive!" << std::endl;
-	//else
-    //    std::cout << "Response: " << buffer << std::endl;
+	readBytes = read(handle, buffer, 7);
+	if (readBytes != 7)
+		std::cout << "Error: Invalid receive!" << std::endl;
+	else
+        std::cout << "Response: " << buffer << std::endl;
 }
 
 int main (void)
@@ -106,8 +106,8 @@ int main (void)
 
     //std::string i2c_port = "/dev/i2c-0"; //GEN1_I2C
     //std::string i2c_port = "/dev/i2c-1"; //GEN2_I2C
-    std::string i2c_port = "/dev/i2c-2"; //CAM_I2C
-    //std::string i2c_port = "/dev/i2c-4"; //PWR_I2C
+    //std::string i2c_port = "/dev/i2c-2"; //CAM_I2C
+    std::string i2c_port = "/dev/i2c-4"; //PWR_I2C
 
 	// open device on /dev/i2c-0
 	if ((device1Handle = open(i2c_port.c_str(), O_RDWR)) < 0) {

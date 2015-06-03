@@ -34,11 +34,19 @@ Lesser General Public License for more details.
 
 #include "SimpleGPIO.h"
 
+/*
 int outPinCount = 4;
 int outPins[] = {57, 81, 82, 84};
 
 int inPinCount = 7;
 int inPins[] = {160, 161, 162, 163, 164, 165, 166};
+*/
+
+int outPinCount = 11;
+int outPins[] = {57, 81, 82, 84, 160, 161, 162, 163, 164, 165, 166};
+
+int inPinCount = 0;
+int inPins[] = {};
 
 void readGPIO()
 {
