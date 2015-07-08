@@ -1,16 +1,25 @@
 Version2.172364 CAUTION: Do not change the contents of this file. File corruption is probable!
 DebugData497736316
-SampleData3485000000150004731
+SampleData34175000000150004731
 {
    D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,D12,D13,D14,D15,D16,D17,D18,D19,D20,D21,D22,D23,D24,D25,D26,D27,D28,D29,D30,D31,CLK1,CLK2,Count
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,50000000
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,50000000
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,6
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,1537
    U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,0,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,5
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,1
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,51404434
-   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,0,U,U,0,0,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,0,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,2
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,0,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,1,U,U,U,U,U,U,U,U,U,U,U,4
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,0,U,U,U,U,U,U,U,U,U,U,U,1
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,0,U,U,U,U,U,U,U,U,U,U,U,52587872
+   U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,U,0,U,1,U,U,1,0,U,U,U,U,U,U,U,U,U,U,U,1
 }
 ShowGraticuleTrue
 ShowTriggerTrue
@@ -19,7 +28,7 @@ LastVisibleCursor1
 UnitsTimeTrue
 ColumnsVisibleTrue
 ScaleRelativeToReferenceTrue
-ScaleFactor0.00001
+ScaleFactor0.0005
 ReferenceOffset4730
 ReferencePosition1
 StatesOnlyTrue
@@ -28,7 +37,7 @@ SaveOnAcqFalse
 SaveOnAcqAction0
 SaveOnAcqMaxFiles1
 SaveOnAcqHoldoff0
-USB_ErrorCount14
+USB_ErrorCount15
 InvertedChannelListFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalseFalse
 ExportFormat2
 ExportRadix1
@@ -50,7 +59,7 @@ GroupRS232 Example121-1True0False028False009600True12False0
 GroupCAN Example121-1True0False04125000012True0.750True0.25
 Group1-Wire Example121-1True0False06False200
 GroupSmart Card Example121-1True0False038False219600True02False00
-Row18False-12850False1True-1
+Row18False-12851False1True-1
 Row16False-12850False1True-1
 Row21False-12850False1True-1
 Row22False-12850False1True-1
@@ -61,7 +70,7 @@ Column20650
 Column306500
 Pattern00000000000000000000000000000000000
 Pattern10000000000000000000000000000000000
-Edge01000000000000000001000000000000000
+Edge01000000000000000000001000000000000
 Edge10000000000000000000000000000000000
 IsDemoDataFalse
 AcquiredSampleMode1
