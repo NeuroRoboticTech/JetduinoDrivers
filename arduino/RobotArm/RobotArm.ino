@@ -108,9 +108,9 @@ void setup () {
 void processGripper(String &servoPosReport, String &servoAddReport) {
   
   if(axisPos[gripperCloseIdx] == 1023)
-    servoAdd[gripperIdx] = -5;
+    servoAdd[gripperIdx] = -10;
   else if(axisPos[gripperOpenIdx] == 1023)
-    servoAdd[gripperIdx] = 5;
+    servoAdd[gripperIdx] = 10;
   else
     servoAdd[gripperIdx] = 0;
   
