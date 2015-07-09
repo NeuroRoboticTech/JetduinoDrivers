@@ -1,10 +1,10 @@
 #include <DynamixelSerial.h>
 
-#define SERVO_ID1 1
-#define SERVO_ID2 2
+//#define SERVO_ID1 1
+//#define SERVO_ID2 2
 
-#define SERVO_COUNT 2
-#define AXIS_COUNT 2
+#define SERVO_COUNT 4
+#define AXIS_COUNT 4
 // These constants won't change.  They're used to give names
 // to the pins used:
 const int x1Pin = A0;  
@@ -36,8 +36,8 @@ void setServoPositions(int pos) {
     //servoAdd[i] = 0;
     Serial.println("Servo: " + String(i+1) + ", " + pos);
     //Dynamixel.move (i+1, pos);
-    Dynamixel.moveSpeed (i+1, servoPos[i], 30);
-    delay(200);
+    Dynamixel.moveSpeed (i+1, pos, 30);
+    delay(10);
   }  
 }
 
@@ -83,14 +83,14 @@ void setup () {
   
   //setServoPositions(512);
     
-  axisID[0] = A0;
+  axisID[0] = A1;
   axisPos[0] = 0;
-  axisID[1] = A1;
+  axisID[1] = A0;
   axisPos[1] = 0;
-  //axisID[2] = A2;
-  //axisPos[2] = 0;
-  //axisID[3] = A3;
-  //axisPos[3] = 0;
+  axisID[2] = A3;
+  axisPos[2] = 0;
+  axisID[3] = A2;
+  axisPos[3] = 0;
   
   for(int i=0; i<SERVO_COUNT; i++)
   {
@@ -187,7 +187,42 @@ void ReadPos(int servo, int target)
 }
 */
 
+void processJoysticks() {
+  String servoPosReport = "", servoAddReport = ""; 
+  
+  // read the analog in value:
+  for(int i=0; i<AXIS_COUNT; i++)
+  {
+    axisPos[i] = analogRead(axisID[i]);
+    servoAdd[i] = map(axisPos[i], 255, 755, -10, 10);
+    
+    if( (servoPos[i] + servoAdd[i]) >= 0 && (servoPos[i] + servoAdd[i] < 1024))
+      servoPos[i] += servoAdd[i];
+
+    servoPosReport += String(servoPos[i]);
+    servoAddReport += String(servoAdd[i]);
+    
+    if(i < AXIS_COUNT)
+    {
+       servoPosReport += ", ";
+       servoAddReport += ", ";
+    }
+    
+
+    if(servoAdd[i] != 0)  
+    {
+      //Serial.println("Servo: " + String(i+1) + ", " + servoPos[i]);
+      Dynamixel.moveSpeed (i+1, servoPos[i], 150);
+      delay(10); 
+    }
+  }
+    
+  Serial.println(servoPosReport + "     " + servoAddReport);
+}
+
 void loop () { 
+  processJoysticks();
+  
   //int x1 = 0; //analogRead(A0);
 
   //int servoAddX1 = map(x1, 255, 755, -10, 10);
@@ -212,11 +247,11 @@ void loop () {
 
   //ReadPosWithError(SERVO_ID1, 450);
   
-  setServoPositions(450);
-  delay (2000); 
+  //setServoPositions(450);
+  //delay (2000); 
   //digitalWrite(22, LOW);   // turn the LED on (HIGH is the voltage level)
   //Serial.println("Move 650");
-  setServoPositions(650);
+  //setServoPositions(650);
 
   //Dynamixel.move(SERVO_ID1, 650); 
   //delay(100);
@@ -228,6 +263,6 @@ void loop () {
   //Serial.print("Position: ");
   //Serial.println(Position);
 
-  delay (2000); 
+  delay (20); 
 } 
 
