@@ -35,8 +35,8 @@ void setServoPositions(int pos) {
     //servoPos[i] = pos;
     //servoAdd[i] = 0;
     Serial.println("Servo: " + String(i+1) + ", " + pos);
-    Dynamixel.move (i+1, pos);
-    //Dynamixel.moveSpeed (i+1, servoPos[i], 30);
+    //Dynamixel.move (i+1, pos);
+    Dynamixel.moveSpeed (i+1, servoPos[i], 30);
     delay(200);
   }  
 }
@@ -92,25 +92,25 @@ void setup () {
   //axisID[3] = A3;
   //axisPos[3] = 0;
   
-  //for(int i=0; i<SERVO_COUNT; i++)
-  //{
-  //  Serial.print("Setup servo: ");
-  //  Serial.println(i+1);
-  //  servoPos[i] = 512;
-  //  servoAdd[i] = 0;
-  //  Dynamixel.moveSpeed (i+1,servoPos[0], 150);
-  //  
-  //}
+  for(int i=0; i<SERVO_COUNT; i++)
+  {
+    Serial.print("Setup servo: ");
+    Serial.println(i+1);
+    servoPos[i] = 512;
+    servoAdd[i] = 0;
+    Dynamixel.moveSpeed (i+1,servoPos[0], 150);
+    
+  }
   
-  Serial.println("Set speed 1");
-  delay (100); 
-  servoPos[0] = 512;
-  servoAdd[0] = 0;
-  Dynamixel.moveSpeed (SERVO_ID1,servoPos[0], 0);
-  delay (100); 
-  Serial.println("Set speed 2");
-  Dynamixel.moveSpeed (SERVO_ID2,512, 0);
-  delay(1000);
+  //Serial.println("Set speed 1");
+  //delay (100); 
+  //servoPos[0] = 512;
+  //servoAdd[0] = 0;
+  //Dynamixel.moveSpeed (SERVO_ID1,servoPos[0], 0);
+  //delay (100); 
+  //Serial.println("Set speed 2");
+  //Dynamixel.moveSpeed (SERVO_ID2,512, 0);
+  //delay(1000);
   
   //ref_pos = Dynamixel.readPosition(1);
   //delay (100); 
