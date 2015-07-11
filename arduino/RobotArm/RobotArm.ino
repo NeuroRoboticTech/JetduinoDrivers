@@ -156,7 +156,7 @@ void processJoysticks() {
     
     //If it is greater than 1020 then the button is being pressed.
     if(axisPos[i] < 1020)
-      servoAdd[i] = map(axisPos[i], 255, 755, -10, 10);
+      servoAdd[i] = map(axisPos[i], 255, 755, -5, 5);
     else
       servoAdd[i] = 0;
 
