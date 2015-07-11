@@ -139,7 +139,7 @@ void loop () {
 
   //ReadPosWithError(SERVO_ID1, 450);
   
-  delay (2000); 
+  delay (250); 
   //digitalWrite(22, LOW);   // turn the LED on (HIGH is the voltage level)
   Serial.println("Move 650");
   Dynamixel.move(SERVO_ID1, 650); 
@@ -147,7 +147,7 @@ void loop () {
   Dynamixel.move(SERVO_ID2, 450); 
    //Dynamixel.move(1, 650);
    
-  delay(2000);
+  delay(250);
   //Position = Dynamixel.readPosition(1);       // Request and Print the Position 
   //Serial.print("Position: ");
   //Serial.println(Position);

@@ -1,5 +1,7 @@
 #include <DynamixelSerial.h>
 
+//#define ENABLE_DEBUG 1
+
 #define SERVO_COUNT 5
 #define AXIS_COUNT 4
 
@@ -9,6 +11,7 @@ const int x1Pin = A0;
 const int y1Pin = A1; 
 const int x2Pin = A2; 
 const int y2Pin = A3;
+const int pressurePin = A11;
 
 //Index of the AxisPos array that controls gripper open/close
 const int gripperCloseIdx = 1;
@@ -17,9 +20,11 @@ const int gripperOpenIdx = 3;
 const int gripperIdx = 4;
 
 int servoPos[SERVO_COUNT];
+int servoDir[SERVO_COUNT];
 int servoAdd[SERVO_COUNT];
 int axisID[AXIS_COUNT];
 int axisPos[AXIS_COUNT];
+int gripPressure = 0;
 
 DynamixelSerial Dynamixel(&Serial2);
 
@@ -36,10 +41,9 @@ void setStatusReturnLevel(unsigned char level) {
 void setServoPositions(int pos) {
   for(int i=0; i<SERVO_COUNT; i++)
   {
-    //servoPos[i] = pos;
-    //servoAdd[i] = 0;
+#ifdef ENABLE_DEBUG
     Serial.println("Servo: " + String(i+1) + ", " + pos);
-    //Dynamixel.move (i+1, pos);
+#endif
     Dynamixel.moveSpeed (i+1, pos, 30);
     delay(10);
   }  
@@ -61,12 +65,13 @@ void setup () {
   PMC->PMC_MCKR = SYS_BOARD_MCKR;
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {} 
  
-  
+#ifdef ENABLE_DEBUG  
   Serial.begin(57600);
   
   while(!Serial);
   Serial.println("Starting setup");
-  
+#endif
+
   pinMode(22, OUTPUT);
   Dynamixel.begin (1000000, 22); 
 
@@ -83,11 +88,19 @@ void setup () {
   axisID[3] = A2;
   axisPos[3] = 0;
   
+  servoDir[0] = -1;
+  servoDir[1] = 1;
+  servoDir[2] = 1;
+  servoDir[3] = 1;
+  servoDir[4] = 1;
+  
   for(int i=0; i<SERVO_COUNT; i++)
   {
+#ifdef ENABLE_DEBUG
     Serial.print("Setup servo: ");
     Serial.println(i+1);
-    
+#endif
+
     if(i != gripperIdx)
     {
       servoPos[i] = 512;
@@ -102,13 +115,21 @@ void setup () {
     Dynamixel.moveSpeed (i+1,servoPos[0], 150);
   }
   
+
+#ifdef ENABLE_DEBUG
   Serial.println("Finished Setup");
+#endif
 } 
 
 void processGripper(String &servoPosReport, String &servoAddReport) {
   
+  gripPressure = analogRead(pressurePin);
+  
   if(axisPos[gripperCloseIdx] == 1023)
-    servoAdd[gripperIdx] = -10;
+  { 
+    if(gripPressure < 850)
+      servoAdd[gripperIdx] = -10;
+  }
   else if(axisPos[gripperOpenIdx] == 1023)
     servoAdd[gripperIdx] = 10;
   else
@@ -116,9 +137,9 @@ void processGripper(String &servoPosReport, String &servoAddReport) {
   
   if( (servoPos[gripperIdx] + servoAdd[gripperIdx]) >= 0 
     && (servoPos[gripperIdx] + servoAdd[gripperIdx] <= 512))
-    servoPos[gripperIdx] += servoAdd[gripperIdx];
+    servoPos[gripperIdx] += (servoDir[gripperIdx] * servoAdd[gripperIdx]);
     
-  servoPosReport += String(servoPos[gripperIdx]);
+  servoPosReport += (String(servoPos[gripperIdx]) + ", P: " + String(gripPressure));
   servoAddReport += String(servoAdd[gripperIdx]);
     
   if(servoAdd[gripperIdx] != 0)  
@@ -140,7 +161,7 @@ void processJoysticks() {
       servoAdd[i] = 0;
 
     if( (servoPos[i] + servoAdd[i]) >= 0 && (servoPos[i] + servoAdd[i] < 1024))
-      servoPos[i] += servoAdd[i];
+      servoPos[i] += (servoDir[i] * servoAdd[i]);
 
     servoPosReport += String(servoPos[i]);
     servoAddReport += String(servoAdd[i]);
@@ -162,7 +183,9 @@ void processJoysticks() {
   
   processGripper(servoPosReport, servoAddReport);
     
+#ifdef ENABLE_DEBUG
   Serial.println(servoPosReport + "     " + servoAddReport + "     " + axisReport);
+#endif
 }
 
 void loop () { 
