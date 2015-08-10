@@ -1,6 +1,6 @@
 #include <DynamixelSerial.h>
 
-#define SERVO_ID 5
+#define SERVO_ID 19
 
 DynamixelSerial Dynamixel(&Serial2);
 
@@ -30,10 +30,10 @@ void setup() {
   delay(20);
   //Dynamixel.reset(SERVO_ID);
   delay(20);
-  Dynamixel.setStatusReturnLevel(SERVO_ID, 1);
+  //Dynamixel.setStatusReturnLevel(SERVO_ID, 1);
   delay(20);
   
-  //Dynamixel.setID(1, SERVO_ID);
+  //Dynamixel.setID(19, SERVO_ID);
   //delay(500);
   
   Serial.println("Finished Setup");
@@ -41,9 +41,9 @@ void setup() {
 
 void loop() {
   Serial.println("Move 450");
-  Dynamixel.moveSpeed (SERVO_ID, 512, 150);
+  Dynamixel.moveSpeed (SERVO_ID, 712, 150);
   delay(3000);
   Serial.println("Move 650");
-  Dynamixel.moveSpeed (SERVO_ID, 0, 150);
+  Dynamixel.moveSpeed (SERVO_ID, 312, 150);
   delay(3000);  
 }
