@@ -95,7 +95,7 @@ timespec diff(timespec start, timespec end)
 static void dumpstat(const char *name, int fd)
 {
 	__u8	mode, lsb, bitsr=8, bitsw;
-	__u32	speed=22000000;
+	__u32	speed=100000;
 
 	if (ioctl(fd, SPI_IOC_RD_MODE, &mode) < 0) {
 		perror("SPI rd_mode");
@@ -146,7 +146,7 @@ void do_msg(int fd)
 
 	xfer[0].tx_buf = (unsigned long) txbuf;
 	xfer[0].rx_buf = (unsigned long) rxbuf;
-	xfer[0].len = len;
+	xfer[0].len = 1; //len;
 
 	status = ioctl(fd, SPI_IOC_MESSAGE(1), xfer);
 	if (status < 0) {
@@ -186,8 +186,8 @@ int main (void)
     }
 
 	// open device on /dev/spidev0.0
-	if ((deviceHandle = open("/dev/spidev0.0", O_RDWR)) < 0) {
-		printf("Error: Couldn't open device 0! %d\n", deviceHandle);
+	if ((deviceHandle = open("/dev/spidev0.1", O_RDWR)) < 0) {
+		printf("Error: Couldn't open device 1! %d\n", deviceHandle);
 		return 1;
 	}
 

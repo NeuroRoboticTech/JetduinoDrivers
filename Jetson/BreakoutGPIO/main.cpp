@@ -34,19 +34,34 @@ Lesser General Public License for more details.
 
 #include "SimpleGPIO.h"
 
+//GPIO Pin Mapping
+//PH1  57
+//PK1  81
+//PK2  82
+//PK4  84
+
+//PU0  160
+//PU1  161
+//PU2  162
+//PU3  163
+//PU4  164
+//PU5  165
+//PU6  166
+
+
+int outPinCount = 6;
+int outPins[] = {57, 81, 82, 84, 160, 161};
+
+int inPinCount = 5;
+int inPins[] = {162, 163, 164, 165, 166};
+
 /*
-int outPinCount = 4;
-int outPins[] = {57, 81, 82, 84};
-
-int inPinCount = 7;
-int inPins[] = {160, 161, 162, 163, 164, 165, 166};
-*/
-
 int outPinCount = 11;
 int outPins[] = {57, 81, 82, 84, 160, 161, 162, 163, 164, 165, 166};
 
 int inPinCount = 0;
 int inPins[] = {};
+*/
 
 void readGPIO()
 {

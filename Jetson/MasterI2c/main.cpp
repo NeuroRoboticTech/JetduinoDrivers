@@ -99,7 +99,9 @@ int main (void)
 	printf("========================================\n");
 
 	// initialize buffer
-	buffer[0] = 0x00;
+	for(int i=0; i<7; i++) {
+        buffer[i] = i;
+	}
 
 	// address of i2c Arduino device 1
     int device1I2CAddress = 0x01;  // (0x01 = 42)
@@ -115,14 +117,16 @@ int main (void)
 		return 1;
 	}
 
-	// connect to arduino as i2c slave
+	// connect to arduino as i2c master
 	if (ioctl(device1Handle, I2C_SLAVE, device1I2CAddress) < 0) {
 		printf("Error: Couldn't find arduino on address!\n");
 		return 1;
 	}
 
     for(int i=0; i<10; i++) {
-        get_data(device1Handle, 0);
+        if (write(device1Handle, buffer, 3) != 3) {
+            /* ERROR HANDLING: i2c transaction failed */
+        }
 		usleep(1000000); // 1s
     }
 
