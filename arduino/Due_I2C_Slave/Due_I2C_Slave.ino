@@ -4,11 +4,12 @@ void setup()
 {
   Serial.begin(57600);  // start serial for output
   while(!Serial);
-  Serial.println("Starting setup");
 
-  Wire.begin(1);        // join i2c bus (address optional for master)
+  Wire.begin(0x03);        // join i2c bus (address optional for master)
   Wire.onRequest(requestEvent); // register event  
   Wire.onReceive(receiveEvent); // register event
+
+  Serial.println("Started Wire");
 }
 
 void loop()
@@ -29,6 +30,8 @@ void requestEvent()
 // this function is registered as an event, see setup()
 void receiveEvent(int howMany)
 {
+  Serial.println("Received data");
+    
   String s = "";
   while(Wire.available()) // loop through all but the last
   {
