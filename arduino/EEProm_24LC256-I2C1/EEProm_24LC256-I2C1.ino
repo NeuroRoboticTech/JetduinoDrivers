@@ -1,6 +1,6 @@
 #include "Wire.h"
 int data=0x5;
-byte high=0x00, low=0x00;
+byte high=0x00, low=0x01;
 
 void setup() {
   Wire1.begin();
