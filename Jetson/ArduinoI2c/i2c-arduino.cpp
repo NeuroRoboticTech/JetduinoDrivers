@@ -102,7 +102,7 @@ int main (void)
 	buffer[0] = 0x00;
 
 	// address of i2c Arduino device 1
-    int device1I2CAddress = 0x01;  // (0x01 = 42)
+    int device1I2CAddress = 0x03;  // (0x01 = 42)
 
     std::string i2c_port = "/dev/i2c-0"; //GEN1_I2C
     //std::string i2c_port = "/dev/i2c-1"; //GEN2_I2C

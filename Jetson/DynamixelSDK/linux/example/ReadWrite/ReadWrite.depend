@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1430823090 source:/media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/example/ReadWrite/ReadWrite.c
+	<stdio.h>
+	<termio.h>
+	<unistd.h>
+	<dynamixel.h>
+
+1430219023 /media/ubuntu/jetson_data/AnimatLabSDK/3rdParty/JetduinoDrivers/Jetson/DynamixelSDK/linux/include/dynamixel.h
+
